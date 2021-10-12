@@ -20,7 +20,8 @@
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
 							"recursive": true,
-							"wildcardFileName": "*",
+							"wildcardFolderPath": "Public",
+							"wildcardFileName": "EMP",
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
@@ -37,7 +38,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "BlobCSV",
+						"referenceName": "BlobData",
 						"type": "DatasetReference"
 					}
 				],
@@ -49,6 +50,8 @@
 				]
 			}
 		],
-		"annotations": []
-	}
+		"annotations": [],
+		"lastPublishTime": "2021-10-12T14:09:06Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
 }

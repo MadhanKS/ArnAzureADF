@@ -12,5 +12,6 @@
 			"schema": "PUBLIC",
 			"table": "EMP"
 		}
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
 }
