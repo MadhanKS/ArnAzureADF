@@ -1,0 +1,9 @@
+{
+	"name": "Arnazuredatafactory",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "1fca3583-ccc6-4392-84a2-9fdfcc42d65e",
+		"tenantId": "25c38fd9-66d8-416d-ab44-942e3fa0f4d9"
+	}
+}
