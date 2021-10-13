@@ -33,7 +33,7 @@
 				}
 			},
 			{
-				"name": "ForFiles",
+				"name": "ForeachFiles",
 				"type": "ForEach",
 				"dependsOn": [
 					{
