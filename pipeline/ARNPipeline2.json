@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Get Metadata1",
+				"name": "GetFileNames",
 				"type": "GetMetadata",
 				"dependsOn": [],
 				"policy": {
@@ -24,6 +24,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -32,11 +33,11 @@
 				}
 			},
 			{
-				"name": "ForEach1",
+				"name": "ForFiles",
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Get Metadata1",
+						"activity": "GetFileNames",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -50,7 +51,7 @@
 					},
 					"activities": [
 						{
-							"name": "Copy data2",
+							"name": "BlobToSnowflake",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
