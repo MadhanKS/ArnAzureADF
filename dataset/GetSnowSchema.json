@@ -10,7 +10,7 @@
 		"schema": [],
 		"typeProperties": {
 			"schema": "INFORMATION_SCHEMA",
-			"table": "TABLES"
+			"table": "EMP"
 		}
 	}
 }
