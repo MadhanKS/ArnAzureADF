@@ -75,7 +75,8 @@
 								"dataset": {
 									"referenceName": "GetSnowSchema",
 									"type": "DatasetReference"
-								}
+								},
+								"firstRowOnly": false
 							}
 						},
 						{
