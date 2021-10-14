@@ -33,29 +33,54 @@
 				}
 			},
 			{
-				"name": "GetSnowflakeSchema",
-				"type": "Lookup",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
+				"name": "ForEachInputFiles",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "GetFileNames",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
-					"source": {
-						"type": "SnowflakeSource",
-						"query": "Select * from information_schema.tables;",
-						"exportSettings": {
-							"type": "SnowflakeExportCopyCommand"
-						}
+					"items": {
+						"value": "@activity('GetFileNames').output.childitems",
+						"type": "Expression"
 					},
-					"dataset": {
-						"referenceName": "GetSnowSchema",
-						"type": "DatasetReference"
-					}
+					"activities": [
+						{
+							"name": "GetSnowflakeSchema",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SnowflakeSource",
+									"query": {
+										"value": "@item().name",
+										"type": "Expression"
+									},
+									"exportSettings": {
+										"type": "SnowflakeExportCopyCommand"
+									}
+								},
+								"dataset": {
+									"referenceName": "GetSnowSchema",
+									"type": "DatasetReference"
+								},
+								"firstRowOnly": false
+							}
+						}
+					]
 				}
 			}
 		],
