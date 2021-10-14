@@ -13,7 +13,10 @@
 				"value": "PUBLIC",
 				"type": "Expression"
 			},
-			"table": "@ParamTableName"
+			"table": {
+				"value": "@TableName",
+				"type": "Expression"
+			}
 		}
 	}
 }
