@@ -88,6 +88,12 @@
 									"dependencyConditions": [
 										"Succeeded"
 									]
+								},
+								{
+									"activity": "SetTableName",
+									"dependencyConditions": [
+										"Succeeded"
+									]
 								}
 							],
 							"userProperties": [],
@@ -145,11 +151,26 @@
 									}
 								]
 							}
+						},
+						{
+							"name": "SetTableName",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "TableName",
+								"value": "@toUpper(first(split(item().name,'.')))"
+							}
 						}
 					]
 				}
 			}
 		],
+		"variables": {
+			"TableName": {
+				"type": "String"
+			}
+		},
 		"annotations": []
 	}
 }
