@@ -144,7 +144,7 @@
 										],
 										"outputs": [
 											{
-												"referenceName": "SnowDynamicDataset",
+												"referenceName": "SnowflakeTable",
 												"type": "DatasetReference"
 											}
 										]
