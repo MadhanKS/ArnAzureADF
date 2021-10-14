@@ -9,7 +9,7 @@
 		"type": "SnowflakeTable",
 		"schema": [],
 		"typeProperties": {
-			"schema": "INFORMATION_SCHEMA",
+			"schema": "PUBLIC",
 			"table": "EMP"
 		}
 	}
