@@ -33,9 +33,42 @@
 				}
 			},
 			{
-				"name": "ForeachFiles",
+				"name": "GetSnowflakeSchema",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SnowflakeSource",
+						"query": "select * from information_schema.tables;",
+						"exportSettings": {
+							"type": "SnowflakeExportCopyCommand"
+						}
+					},
+					"dataset": {
+						"referenceName": "SnowflakeTable",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForeachSchemaTables",
 				"type": "ForEach",
 				"dependsOn": [
+					{
+						"activity": "GetSnowflakeSchema",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
 					{
 						"activity": "GetFileNames",
 						"dependencyConditions": [
@@ -46,58 +79,72 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('GetFileNames').output.Childitems",
+						"value": "@activity('GetSnowflakeSchema').output.value",
 						"type": "Expression"
 					},
 					"activities": [
 						{
-							"name": "BlobToSnowflake",
-							"type": "Copy",
+							"name": "If Condition1",
+							"type": "IfCondition",
 							"dependsOn": [],
-							"policy": {
-								"timeout": "7.00:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
 							"userProperties": [],
 							"typeProperties": {
-								"source": {
-									"type": "DelimitedTextSource",
-									"storeSettings": {
-										"type": "AzureBlobStorageReadSettings",
-										"recursive": true,
-										"wildcardFileName": {
-											"value": "@item().name",
-											"type": "Expression"
+								"expression": {
+									"value": "@equals(activity('GetFileNames').output.name, activity('GetSnowflakeSchema').output.table_name)",
+									"type": "Expression"
+								},
+								"ifTrueActivities": [
+									{
+										"name": "BlobToSnowflake_copy1",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
 										},
-										"enablePartitionDiscovery": false
-									},
-									"formatSettings": {
-										"type": "DelimitedTextReadSettings"
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"storeSettings": {
+													"type": "AzureBlobStorageReadSettings",
+													"recursive": true,
+													"wildcardFileName": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings"
+												}
+											},
+											"sink": {
+												"type": "SnowflakeSink",
+												"importSettings": {
+													"type": "SnowflakeImportCopyCommand"
+												}
+											},
+											"enableStaging": false
+										},
+										"inputs": [
+											{
+												"referenceName": "BlobCSV",
+												"type": "DatasetReference"
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "SnowflakeTable",
+												"type": "DatasetReference"
+											}
+										]
 									}
-								},
-								"sink": {
-									"type": "SnowflakeSink",
-									"importSettings": {
-										"type": "SnowflakeImportCopyCommand"
-									}
-								},
-								"enableStaging": false
-							},
-							"inputs": [
-								{
-									"referenceName": "BlobCSV",
-									"type": "DatasetReference"
-								}
-							],
-							"outputs": [
-								{
-									"referenceName": "SnowflakeTable",
-									"type": "DatasetReference"
-								}
-							]
+								]
+							}
 						}
 					]
 				}
