@@ -47,106 +47,15 @@
 				"typeProperties": {
 					"source": {
 						"type": "SnowflakeSource",
-						"query": "select * from information_schema.tables;",
+						"query": "Select * from information_schema.tables;",
 						"exportSettings": {
 							"type": "SnowflakeExportCopyCommand"
 						}
 					},
 					"dataset": {
-						"referenceName": "SnowflakeTable",
+						"referenceName": "GetSnowSchema",
 						"type": "DatasetReference"
-					},
-					"firstRowOnly": false
-				}
-			},
-			{
-				"name": "ForeachSchemaTables",
-				"type": "ForEach",
-				"dependsOn": [
-					{
-						"activity": "GetSnowflakeSchema",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					},
-					{
-						"activity": "GetFileNames",
-						"dependencyConditions": [
-							"Succeeded"
-						]
 					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"items": {
-						"value": "@activity('GetSnowflakeSchema').output.value\nactivity('GetFileNames').output",
-						"type": "Expression"
-					},
-					"activities": [
-						{
-							"name": "If Condition1",
-							"type": "IfCondition",
-							"dependsOn": [],
-							"userProperties": [],
-							"typeProperties": {
-								"expression": {
-									"value": "@equals(activity('GetFileNames').output.name, activity('GetSnowflakeSchema').output.table_name)",
-									"type": "Expression"
-								},
-								"ifTrueActivities": [
-									{
-										"name": "BlobToSnowflake_copy1",
-										"type": "Copy",
-										"dependsOn": [],
-										"policy": {
-											"timeout": "7.00:00:00",
-											"retry": 0,
-											"retryIntervalInSeconds": 30,
-											"secureOutput": false,
-											"secureInput": false
-										},
-										"userProperties": [],
-										"typeProperties": {
-											"source": {
-												"type": "DelimitedTextSource",
-												"storeSettings": {
-													"type": "AzureBlobStorageReadSettings",
-													"recursive": true,
-													"wildcardFileName": {
-														"value": "@item().name",
-														"type": "Expression"
-													},
-													"enablePartitionDiscovery": false
-												},
-												"formatSettings": {
-													"type": "DelimitedTextReadSettings"
-												}
-											},
-											"sink": {
-												"type": "SnowflakeSink",
-												"importSettings": {
-													"type": "SnowflakeImportCopyCommand"
-												}
-											},
-											"enableStaging": false
-										},
-										"inputs": [
-											{
-												"referenceName": "BlobCSV",
-												"type": "DatasetReference"
-											}
-										],
-										"outputs": [
-											{
-												"referenceName": "SnowflakeTable",
-												"type": "DatasetReference"
-											}
-										]
-									}
-								]
-							}
-						}
-					]
 				}
 			}
 		],

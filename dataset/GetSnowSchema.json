@@ -1,0 +1,16 @@
+{
+	"name": "GetSnowSchema",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADFSnowflake Linkseevice",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SnowflakeTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "INFORMATION_SCHEMA",
+			"table": "TABLES"
+		}
+	}
+}
