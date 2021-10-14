@@ -79,6 +79,76 @@
 								},
 								"firstRowOnly": false
 							}
+						},
+						{
+							"name": "If Check Count",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "GetSnowflakeSchema",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@activity('GetSnowflakeSchema').output.count > 0",
+									"type": "Expression"
+								},
+								"ifTrueActivities": [
+									{
+										"name": "CopyToSnowflake",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"storeSettings": {
+													"type": "AzureBlobStorageReadSettings",
+													"recursive": true,
+													"wildcardFileName": {
+														"value": "@activity('GetSnowflakeSchema').output.table_name",
+														"type": "Expression"
+													},
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings"
+												}
+											},
+											"sink": {
+												"type": "SnowflakeSink",
+												"importSettings": {
+													"type": "SnowflakeImportCopyCommand"
+												}
+											},
+											"enableStaging": false
+										},
+										"inputs": [
+											{
+												"referenceName": "BlobCSV",
+												"type": "DatasetReference"
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "SnowflakeTable",
+												"type": "DatasetReference"
+											}
+										]
+									}
+								]
+							}
 						}
 					]
 				}
