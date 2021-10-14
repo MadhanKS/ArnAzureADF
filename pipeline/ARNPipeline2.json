@@ -79,7 +79,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('GetSnowflakeSchema').output.value",
+						"value": "@activity('GetSnowflakeSchema').output.value\nactivity('GetFileNames').output",
 						"type": "Expression"
 					},
 					"activities": [
