@@ -89,12 +89,6 @@
 									"dependencyConditions": [
 										"Succeeded"
 									]
-								},
-								{
-									"activity": "SetTableName",
-									"dependencyConditions": [
-										"Succeeded"
-									]
 								}
 							],
 							"userProperties": [],
@@ -122,7 +116,10 @@
 												"storeSettings": {
 													"type": "AzureBlobStorageReadSettings",
 													"recursive": true,
-													"wildcardFileName": "item().name",
+													"wildcardFileName": {
+														"value": "concat(@activity('GetSnowflakeSchema').output.table_name,'.csv')",
+														"type": "Expression"
+													},
 													"enablePartitionDiscovery": false
 												},
 												"formatSettings": {
@@ -151,19 +148,6 @@
 										]
 									}
 								]
-							}
-						},
-						{
-							"name": "SetTableName",
-							"type": "SetVariable",
-							"dependsOn": [],
-							"userProperties": [],
-							"typeProperties": {
-								"variableName": "@TableName",
-								"value": {
-									"value": "@item().name",
-									"type": "Expression"
-								}
 							}
 						}
 					]
