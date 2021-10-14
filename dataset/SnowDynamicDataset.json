@@ -1,0 +1,19 @@
+{
+	"name": "SnowDynamicDataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADFSnowflake Linkseevice",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SnowflakeTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@ParamSchemaName",
+				"type": "Expression"
+			},
+			"table": "@ParamTableName"
+		}
+	}
+}
