@@ -5,12 +5,31 @@
 			"referenceName": "ADFSnowflake Linkseevice",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"tablename": {
+				"type": "string",
+				"defaultValue": "tablename"
+			}
+		},
 		"annotations": [],
 		"type": "SnowflakeTable",
-		"schema": [],
+		"schema": [
+			{
+				"name": "EMP_ID",
+				"type": "NUMBER",
+				"precision": 5,
+				"scale": 0
+			},
+			{
+				"name": "EMP_NAME",
+				"type": "VARCHAR",
+				"precision": 10,
+				"scale": 0
+			}
+		],
 		"typeProperties": {
 			"schema": "PUBLIC",
-			"table": "EMP"
+			"table": ""
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
