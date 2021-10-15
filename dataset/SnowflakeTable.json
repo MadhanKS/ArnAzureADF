@@ -5,12 +5,6 @@
 			"referenceName": "ADFSnowflake Linkseevice",
 			"type": "LinkedServiceReference"
 		},
-		"parameters": {
-			"tablename": {
-				"type": "string",
-				"defaultValue": "@toUpper(first(split(item().name,'.')))"
-			}
-		},
 		"annotations": [],
 		"type": "SnowflakeTable",
 		"schema": [
