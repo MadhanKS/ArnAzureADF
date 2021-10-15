@@ -8,7 +8,7 @@
 		"parameters": {
 			"tablename": {
 				"type": "string",
-				"defaultValue": "tablename"
+				"defaultValue": "@toUpper(first(split(item().name,'.')))"
 			}
 		},
 		"annotations": [],

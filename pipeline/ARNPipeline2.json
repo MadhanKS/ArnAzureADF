@@ -149,7 +149,13 @@
 										"outputs": [
 											{
 												"referenceName": "SnowflakeTable",
-												"type": "DatasetReference"
+												"type": "DatasetReference",
+												"parameters": {
+													"tablename": {
+														"value": "@toUpper(first(split(item().name,'.')))",
+														"type": "Expression"
+													}
+												}
 											}
 										]
 									}
