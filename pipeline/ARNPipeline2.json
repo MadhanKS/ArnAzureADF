@@ -24,6 +24,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -121,7 +122,10 @@
 												"storeSettings": {
 													"type": "AzureBlobStorageReadSettings",
 													"recursive": true,
-													"wildcardFileName": "@item().name",
+													"wildcardFileName": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
 													"enablePartitionDiscovery": false
 												},
 												"formatSettings": {
@@ -159,7 +163,10 @@
 							"userProperties": [],
 							"typeProperties": {
 								"variableName": "TableName",
-								"value": "@toUpper(first(split(item().name,'.')))"
+								"value": {
+									"value": "@toUpper(first(split(item().name,'.')))",
+									"type": "Expression"
+								}
 							}
 						}
 					]
