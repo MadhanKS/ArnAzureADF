@@ -110,7 +110,6 @@
 						"container": "arndatafiles"
 					},
 					"columnDelimiter": ",",
-					"rowDelimiter": "\n",
 					"escapeChar": "\\",
 					"quoteChar": "\""
 				},
@@ -131,7 +130,8 @@
 				},
 				"parameters": {
 					"Filename": {
-						"type": "string"
+						"type": "string",
+						"defaultValue": "EMP.csv"
 					}
 				},
 				"annotations": [],
@@ -140,13 +140,12 @@
 					"location": {
 						"type": "AzureBlobStorageLocation",
 						"fileName": {
-							"value": "@dataset.Filename",
+							"value": "@dataset().Filename",
 							"type": "Expression"
 						},
 						"container": "arndatafiles"
 					},
 					"columnDelimiter": ",",
-					"rowDelimiter": "\n",
 					"escapeChar": "\\",
 					"firstRowAsHeader": false,
 					"quoteChar": "\""
@@ -166,15 +165,25 @@
 					"referenceName": "AzureBlobStorageLinkedServices",
 					"type": "LinkedServiceReference"
 				},
+				"parameters": {
+					"Filename": {
+						"type": "string",
+						"defaultValue": "EMP.csv"
+					}
+				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "EMP.csv",
+						"fileName": {
+							"value": "@dataset().Filename",
+							"type": "Expression"
+						},
 						"container": "arndatafiles"
 					},
 					"columnDelimiter": ",",
+					"rowDelimiter": "\r\n",
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
@@ -320,11 +329,9 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "BlobData",
+								"referenceName": "DelimitedText1",
 								"type": "DatasetReference",
-								"parameters": {
-									"Filename": "EMP.csv"
-								}
+								"parameters": {}
 							}
 						],
 						"outputs": [
@@ -344,7 +351,7 @@
 				"lastPublishTime": "2021-10-12T14:09:06Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/BlobData')]",
+				"[concat(variables('factoryId'), '/datasets/DelimitedText1')]",
 				"[concat(variables('factoryId'), '/datasets/SnowflakeTable')]"
 			]
 		},
@@ -477,11 +484,9 @@
 									},
 									"inputs": [
 										{
-											"referenceName": "BlobData",
+											"referenceName": "DelimitedText1",
 											"type": "DatasetReference",
-											"parameters": {
-												"Filename": "EMP.csv"
-											}
+											"parameters": {}
 										}
 									],
 									"outputs": [
@@ -510,6 +515,7 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/BlobData')]",
 				"[concat(variables('factoryId'), '/datasets/GetSnowSchema')]",
+				"[concat(variables('factoryId'), '/datasets/DelimitedText1')]",
 				"[concat(variables('factoryId'), '/datasets/SnowflakeTable')]"
 			]
 		},
@@ -533,10 +539,10 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataset": {
-								"referenceName": "BlobData",
+								"referenceName": "BlobCSV",
 								"type": "DatasetReference",
 								"parameters": {
-									"Filename": "EMP.csv"
+									"FileName": "EMP.csv"
 								}
 							},
 							"fieldList": [
@@ -642,14 +648,9 @@
 									},
 									"inputs": [
 										{
-											"referenceName": "BlobCSV",
+											"referenceName": "DelimitedText1",
 											"type": "DatasetReference",
-											"parameters": {
-												"FileName": {
-													"value": "@activity('Lookup1').output.table_name",
-													"type": "Expression"
-												}
-											}
+											"parameters": {}
 										}
 									],
 									"outputs": [
@@ -676,9 +677,9 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/BlobData')]",
-				"[concat(variables('factoryId'), '/datasets/GetSnowSchema')]",
 				"[concat(variables('factoryId'), '/datasets/BlobCSV')]",
+				"[concat(variables('factoryId'), '/datasets/GetSnowSchema')]",
+				"[concat(variables('factoryId'), '/datasets/DelimitedText1')]",
 				"[concat(variables('factoryId'), '/datasets/SnowDynamicDataset')]"
 			]
 		}
