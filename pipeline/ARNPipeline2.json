@@ -149,8 +149,14 @@
 										],
 										"outputs": [
 											{
-												"referenceName": "GetSnowSchema",
-												"type": "DatasetReference"
+												"referenceName": "SnowDynamicDataset",
+												"type": "DatasetReference",
+												"parameters": {
+													"SnowFileName": {
+														"value": "@variables('TableName')",
+														"type": "Expression"
+													}
+												}
 											}
 										]
 									},
