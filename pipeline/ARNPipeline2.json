@@ -16,11 +16,11 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "BlobData",
+						"referenceName": "BlobCSV",
 						"type": "DatasetReference"
 					},
 					"fieldList": [
-						"itemName"
+						"childItems"
 					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
@@ -66,7 +66,7 @@
 								"source": {
 									"type": "SnowflakeSource",
 									"query": {
-										"value": "('select * from information_schema.tables where table_schema = ''PUBLIC'' and table_name =''EMP\"')",
+										"value": "select * from information_schema.tables where table_schema = 'PUBLIC' and table_name ='@{item().name}'",
 										"type": "Expression"
 									},
 									"exportSettings": {
@@ -77,7 +77,7 @@
 									"referenceName": "GetSnowSchema",
 									"type": "DatasetReference"
 								},
-								"firstRowOnly": false
+								"firstRowOnly": true
 							}
 						},
 						{
@@ -122,7 +122,13 @@
 							"inputs": [
 								{
 									"referenceName": "BlobData",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"Filename": {
+											"value": "@activity('Lookup1').output.firstRow.sourceFile",
+											"type": "Expression"
+										}
+									}
 								}
 							],
 							"outputs": [
