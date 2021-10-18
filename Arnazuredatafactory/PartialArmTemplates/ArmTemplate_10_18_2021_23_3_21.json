@@ -6,93 +6,12 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "Arnazuredatafactory"
-		},
-		"ADFSnowflake Linkseevice_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'ADFSnowflake Linkseevice'"
-		},
-		"AzureBlobStorageLinkedServices_sasUri": {
-			"type": "secureString",
-			"metadata": "Secure string for 'sasUri' of 'AzureBlobStorageLinkedServices'"
-		},
-		"SnowflakeLinkedServices_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'SnowflakeLinkedServices'"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
-		{
-			"name": "[concat(parameters('factoryName'), '/ARNPipeline')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Blob_To_Snowflake",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"wildcardFileName": "*.csv",
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "SnowflakeSink",
-								"importSettings": {
-									"type": "SnowflakeImportCopyCommand"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "BlobCSV",
-								"type": "DatasetReference",
-								"parameters": {
-									"FileName": "EMP.csv"
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "SnowflakeTable",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": [],
-				"lastPublishTime": "2021-10-12T14:09:06Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/BlobCSV')]",
-				"[concat(variables('factoryId'), '/datasets/SnowflakeTable')]"
-			]
-		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ARNPipeline2')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -114,8 +33,7 @@
 						"typeProperties": {
 							"dataset": {
 								"referenceName": "BlobInputCSV",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							},
 							"fieldList": [
 								"childItems"
@@ -174,8 +92,7 @@
 										},
 										"dataset": {
 											"referenceName": "GetSnowSchema",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									}
 								},
@@ -243,15 +160,13 @@
 												"inputs": [
 													{
 														"referenceName": "BlobInputCSV",
-														"type": "DatasetReference",
-														"parameters": {}
+														"type": "DatasetReference"
 													}
 												],
 												"outputs": [
 													{
 														"referenceName": "GetSnowSchema",
-														"type": "DatasetReference",
-														"parameters": {}
+														"type": "DatasetReference"
 													}
 												]
 											},
@@ -275,10 +190,6 @@
 						}
 					}
 				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
 				"variables": {
 					"TableName": {
 						"type": "String"
@@ -286,10 +197,7 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/BlobInputCSV')]",
-				"[concat(variables('factoryId'), '/datasets/GetSnowSchema')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ARNSnowflake Pipeline')]",
@@ -377,8 +285,7 @@
 										},
 										"dataset": {
 											"referenceName": "GetSnowSchema",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									}
 								},
@@ -436,8 +343,7 @@
 									"outputs": [
 										{
 											"referenceName": "SnowflakeTable",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									]
 								}
@@ -445,10 +351,6 @@
 						}
 					}
 				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
 				"parameters": {
 					"FileName": {
 						"type": "string"
@@ -458,9 +360,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/BlobCSV_copy1')]",
-				"[concat(variables('factoryId'), '/datasets/GetSnowSchema')]",
-				"[concat(variables('factoryId'), '/datasets/BlobData_copy1')]",
-				"[concat(variables('factoryId'), '/datasets/SnowflakeTable')]"
+				"[concat(variables('factoryId'), '/datasets/BlobData_copy1')]"
 			]
 		},
 		{
@@ -549,8 +449,7 @@
 										},
 										"dataset": {
 											"referenceName": "GetSnowSchema",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									}
 								},
@@ -608,8 +507,7 @@
 									"outputs": [
 										{
 											"referenceName": "SnowflakeTable",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									]
 								}
@@ -617,10 +515,6 @@
 						}
 					}
 				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
 				"parameters": {
 					"FileName": {
 						"type": "string"
@@ -630,46 +524,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/BlobCSV_copy1')]",
-				"[concat(variables('factoryId'), '/datasets/GetSnowSchema')]",
-				"[concat(variables('factoryId'), '/datasets/BlobData_copy1')]",
-				"[concat(variables('factoryId'), '/datasets/SnowflakeTable')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BlobCSV')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorageLinkedServices",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"FileName": {
-						"type": "string",
-						"defaultValue": "EMP.csv"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@dataset().FileName",
-							"type": "Expression"
-						},
-						"container": "arndatafiles"
-					},
-					"columnDelimiter": ",",
-					"rowDelimiter": "\r\n",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedServices')]"
+				"[concat(variables('factoryId'), '/datasets/BlobData_copy1')]"
 			]
 		},
 		{
@@ -705,46 +560,7 @@
 				},
 				"schema": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedServices')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BlobData')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorageLinkedServices",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Filename": {
-						"type": "string",
-						"defaultValue": "EMP.csv"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@dataset().Filename",
-							"type": "Expression"
-						},
-						"container": "arndatafiles"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": false,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedServices')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/BlobData_copy1')]",
@@ -778,210 +594,6 @@
 					"quoteChar": "\""
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedServices')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BlobInputCSV')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorageLinkedServices",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "arndatafiles"
-					},
-					"columnDelimiter": ",",
-					"rowDelimiter": "\n",
-					"escapeChar": "\\",
-					"firstRowAsHeader": false,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedServices')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BlobInputCSV_copy1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorageLinkedServices",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "arndatafiles"
-					},
-					"columnDelimiter": ",",
-					"rowDelimiter": "\n",
-					"escapeChar": "\\",
-					"firstRowAsHeader": false,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedServices')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/GetSnowSchema')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ADFSnowflake Linkseevice",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SnowflakeTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "PUBLIC",
-					"table": "EMP"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADFSnowflake Linkseevice')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SnowDynamicDataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ADFSnowflake Linkseevice",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"SnowFileName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "SnowflakeTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": {
-						"value": "PUBLIC",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@dataset.SnowFileName",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADFSnowflake Linkseevice')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SnowflakeTable')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ADFSnowflake Linkseevice",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SnowflakeTable",
-				"schema": [
-					{
-						"name": "EMP_ID",
-						"type": "NUMBER",
-						"precision": 5,
-						"scale": 0
-					},
-					{
-						"name": "EMP_NAME",
-						"type": "VARCHAR",
-						"precision": 10,
-						"scale": 0
-					}
-				],
-				"typeProperties": {
-					"schema": "PUBLIC",
-					"table": "EMP"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADFSnowflake Linkseevice')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADFSnowflake Linkseevice')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "Snowflake",
-				"typeProperties": {
-					"connectionString": "[parameters('ADFSnowflake Linkseevice_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureBlobStorageLinkedServices')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"sasUri": "[parameters('AzureBlobStorageLinkedServices_sasUri')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SnowflakeLinkedServices')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "Snowflake",
-				"typeProperties": {
-					"connectionString": "[parameters('SnowflakeLinkedServices_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/trigger1')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Minute",
-						"interval": 17,
-						"startTime": "2021-10-13T14:20:00Z",
-						"timeZone": "UTC"
-					}
-				}
 			},
 			"dependsOn": []
 		}
