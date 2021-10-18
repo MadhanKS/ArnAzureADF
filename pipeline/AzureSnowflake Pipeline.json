@@ -67,7 +67,7 @@
 								"source": {
 									"type": "SnowflakeSource",
 									"query": {
-										"value": "@concat('select * from information_schema.tables where table_schema = ''PUBLIC'' and table_name =''', toUpper(first(split(item().name,'.'))),'''')",
+										"value": "select table_name from information_schema.tables where table_schema = 'PUBLIC' and table_name ='EMP'\n\n",
 										"type": "Expression"
 									},
 									"exportSettings": {
@@ -105,10 +105,6 @@
 									"storeSettings": {
 										"type": "AzureBlobStorageReadSettings",
 										"recursive": true,
-										"wildcardFileName": {
-											"value": "@activity('Lookup1').output.firstRow.sourceFile",
-											"type": "Expression"
-										},
 										"enablePartitionDiscovery": false
 									},
 									"formatSettings": {
@@ -129,7 +125,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"FileName": {
-											"value": "@activity('Lookup1').output.firstRow.sourceFile",
+											"value": "@activity('Lookup1').output.table_name",
 											"type": "Expression"
 										}
 									}
@@ -141,7 +137,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"SnowFileName": {
-											"value": "@toUpper(first(split(activity('Lookup1').output.firstRow.sourceFile,'.')))",
+											"value": "toUpper(first(split(@activity('Lookup1').output.firstRow.tablen_name,'.')))",
 											"type": "Expression"
 										}
 									}

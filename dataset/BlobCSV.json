@@ -7,7 +7,8 @@
 		},
 		"parameters": {
 			"FileName": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "emp"
 			}
 		},
 		"annotations": [],
@@ -16,7 +17,7 @@
 			"location": {
 				"type": "AzureBlobStorageLocation",
 				"fileName": {
-					"value": "@dataset.FileName",
+					"value": "@dataset().FileName",
 					"type": "Expression"
 				},
 				"container": "arndatafiles"
