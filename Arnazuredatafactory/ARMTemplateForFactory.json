@@ -249,9 +249,14 @@
 												],
 												"outputs": [
 													{
-														"referenceName": "GetSnowSchema",
+														"referenceName": "SnowDynamicDataset",
 														"type": "DatasetReference",
-														"parameters": {}
+														"parameters": {
+															"SnowFileName": {
+																"value": "@variables('TableName')",
+																"type": "Expression"
+															}
+														}
 													}
 												]
 											},
@@ -288,7 +293,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/BlobInputCSV')]",
-				"[concat(variables('factoryId'), '/datasets/GetSnowSchema')]"
+				"[concat(variables('factoryId'), '/datasets/GetSnowSchema')]",
+				"[concat(variables('factoryId'), '/datasets/SnowDynamicDataset')]"
 			]
 		},
 		{
@@ -883,7 +889,7 @@
 						"type": "Expression"
 					},
 					"table": {
-						"value": "@dataset.SnowFileName",
+						"value": "@dataset().SnowFileName",
 						"type": "Expression"
 					}
 				}
