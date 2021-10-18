@@ -13,7 +13,7 @@
 				"container": "arndatafiles"
 			},
 			"columnDelimiter": ",",
-			"rowDelimiter": "\r\n",
+			"rowDelimiter": "\r",
 			"escapeChar": "\\",
 			"firstRowAsHeader": false,
 			"quoteChar": "\""
