@@ -38,7 +38,10 @@
 				"inputs": [
 					{
 						"referenceName": "BlobData",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"Filename": "EMP.csv"
+						}
 					}
 				],
 				"outputs": [
