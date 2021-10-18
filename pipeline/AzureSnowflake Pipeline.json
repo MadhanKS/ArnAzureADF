@@ -111,7 +111,7 @@
 										"type": "AzureBlobStorageReadSettings",
 										"recursive": true,
 										"wildcardFileName": {
-											"value": "@activity('Lookup1').output.firsrtRow.sourceFile",
+											"value": "@activity('Lookup1').output.firstRow.sourceFile",
 											"type": "Expression"
 										},
 										"enablePartitionDiscovery": false
