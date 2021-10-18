@@ -37,8 +37,11 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DelimitedText1",
-						"type": "DatasetReference"
+						"referenceName": "BlobCSV",
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "EMP.csv"
+						}
 					}
 				],
 				"outputs": [
