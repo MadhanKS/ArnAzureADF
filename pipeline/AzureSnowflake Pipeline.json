@@ -129,7 +129,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"FileName": {
-											"value": "@toUpper(first(split(activity('Lookup1').output.firstRow.sourceName,'.')))",
+											"value": "@activity('Lookup1').output.firstRow.sourceFile",
 											"type": "Expression"
 										}
 									}
@@ -141,7 +141,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"SnowFileName": {
-											"value": "toUpper(first(split(@activity('Lookup1').output.firstRow.sourceFile,'.')))",
+											"value": "@toUpper(first(split(activity('Lookup1').output.firstRow.sourceFile,'.')))",
 											"type": "Expression"
 										}
 									}
