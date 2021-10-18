@@ -5,11 +5,17 @@
 			"referenceName": "AzureBlobStorageLinkedServices",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"FileName": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
+				"fileName": "@dataset.FileName",
 				"container": "arndatafiles"
 			},
 			"columnDelimiter": ",",
