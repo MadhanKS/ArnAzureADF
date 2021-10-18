@@ -10,13 +10,13 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "EMP.csv",
+				"fileName": "*.csv",
 				"container": "arndatafiles"
 			},
 			"columnDelimiter": ",",
-			"rowDelimiter": "\r\n",
+			"rowDelimiter": "\n",
 			"escapeChar": "\\",
-			"firstRowAsHeader": true,
+			"firstRowAsHeader": false,
 			"quoteChar": "\""
 		},
 		"schema": []
