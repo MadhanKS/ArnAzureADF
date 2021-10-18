@@ -8,7 +8,7 @@
 		"parameters": {
 			"FileName": {
 				"type": "string",
-				"defaultValue": "emp"
+				"defaultValue": "EMP.csv"
 			}
 		},
 		"annotations": [],
