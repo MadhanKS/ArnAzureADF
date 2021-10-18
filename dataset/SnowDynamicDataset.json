@@ -5,6 +5,11 @@
 			"referenceName": "ADFSnowflake Linkseevice",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"SnowFileName": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "SnowflakeTable",
 		"schema": [],
@@ -13,10 +18,7 @@
 				"value": "PUBLIC",
 				"type": "Expression"
 			},
-			"table": {
-				"value": "@TableName",
-				"type": "Expression"
-			}
+			"table": "@dataset.SnowFileName"
 		}
 	}
 }
