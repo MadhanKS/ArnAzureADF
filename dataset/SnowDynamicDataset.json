@@ -18,7 +18,10 @@
 				"value": "PUBLIC",
 				"type": "Expression"
 			},
-			"table": "@dataset.SnowFileName"
+			"table": {
+				"value": "@dataset().SnowFileName",
+				"type": "Expression"
+			}
 		}
 	}
 }
