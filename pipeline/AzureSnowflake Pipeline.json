@@ -65,26 +65,87 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "SnowflakeSource",
-									"query": {
-										"value": "select * from information_schema.tables where table_schema = 'PUBLIC' and table_name = '@{item().name}'",
-										"type": "Expression"
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": true,
+										"wildcardFileName": {
+											"value": "@item().name",
+											"type": "Expression"
+										},
+										"enablePartitionDiscovery": false
 									},
-									"exportSettings": {
-										"type": "SnowflakeExportCopyCommand"
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
 									}
 								},
 								"dataset": {
+									"referenceName": "DelimitedText1",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "Copy data1",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Lookup1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": true,
+										"wildcardFileName": {
+											"value": "@activity('Lookup1').output.firsrtRow.sourceFile",
+											"type": "Expression"
+										},
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "SnowflakeSink",
+									"importSettings": {
+										"type": "SnowflakeImportCopyCommand"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "DelimitedText1",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
 									"referenceName": "SnowDynamicDataset",
 									"type": "DatasetReference",
 									"parameters": {
 										"SnowFileName": {
-											"value": "@item().name",
+											"value": "toUpper(first(split(@activity('Lookup1').output.firstRow.sourceFile,'.')))",
 											"type": "Expression"
 										}
 									}
 								}
-							}
+							]
 						}
 					]
 				}
