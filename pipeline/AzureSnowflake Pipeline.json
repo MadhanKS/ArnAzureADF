@@ -16,8 +16,11 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "DelimitedText1",
-						"type": "DatasetReference"
+						"referenceName": "BlobData",
+						"type": "DatasetReference",
+						"parameters": {
+							"Filename": "EMP.csv"
+						}
 					},
 					"fieldList": [
 						"childItems"
