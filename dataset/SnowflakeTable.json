@@ -2,7 +2,7 @@
 	"name": "SnowflakeTable",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "SnowflakeLinkedServices",
+			"referenceName": "ADFSnowflake Linkseevice",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
