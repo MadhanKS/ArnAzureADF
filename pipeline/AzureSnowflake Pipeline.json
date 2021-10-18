@@ -124,13 +124,10 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "BlobCSV",
+									"referenceName": "BlobData",
 									"type": "DatasetReference",
 									"parameters": {
-										"FileName": {
-											"value": "@activity('Lookup1').output.table_name",
-											"type": "Expression"
-										}
+										"Filename": "EMP.csv"
 									}
 								}
 							],
