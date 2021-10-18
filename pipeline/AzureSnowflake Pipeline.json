@@ -125,7 +125,10 @@
 							"inputs": [
 								{
 									"referenceName": "DelimitedText1",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"Filename": "EMP.csv"
+									}
 								}
 							],
 							"outputs": [
@@ -134,7 +137,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"SnowFileName": {
-											"value": "toUpper(first(split(@activity('Lookup1').output.firstRow.tablen_name,'.')))",
+											"value": "toUpper(first(split(@activity('Lookup1').output.firstRow.table_name,'.')))",
 											"type": "Expression"
 										}
 									}
