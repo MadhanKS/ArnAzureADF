@@ -2,7 +2,7 @@
 	"name": "SnowflakeTable",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "ADFSnowflake Linkseevice",
+			"referenceName": "SnowflakeLinkedServices",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
@@ -23,7 +23,7 @@
 		],
 		"typeProperties": {
 			"schema": "PUBLIC",
-			"table": ""
+			"table": "EMP"
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
