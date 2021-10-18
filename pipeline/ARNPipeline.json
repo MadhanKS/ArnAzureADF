@@ -33,45 +33,17 @@
 							"type": "SnowflakeImportCopyCommand"
 						}
 					},
-					"enableStaging": false,
-					"translator": {
-						"type": "TabularTranslator",
-						"mappings": [
-							{
-								"source": {
-									"type": "Int32",
-									"ordinal": 1
-								},
-								"sink": {
-									"name": "EMP_ID",
-									"type": "Int64"
-								}
-							},
-							{
-								"source": {
-									"type": "String",
-									"ordinal": 2
-								},
-								"sink": {
-									"name": "EMP_NAME",
-									"type": "String"
-								}
-							}
-						]
-					}
+					"enableStaging": false
 				},
 				"inputs": [
 					{
-						"referenceName": "BlobCSV",
-						"type": "DatasetReference",
-						"parameters": {
-							"FileName": "EMP"
-						}
+						"referenceName": "DelimitedText1",
+						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "GetSnowSchema",
+						"referenceName": "SnowflakeTable",
 						"type": "DatasetReference"
 					}
 				]
