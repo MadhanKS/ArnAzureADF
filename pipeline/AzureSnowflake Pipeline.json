@@ -16,15 +16,13 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "BlobData",
+						"referenceName": "BlobCSV",
 						"type": "DatasetReference",
 						"parameters": {
-							"Filename": "EMP.csv"
+							"FileName": "EMP.csv"
 						}
 					},
-					"fieldList": [
-						"childItems"
-					],
+					"fieldList": [],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
 						"recursive": true,
