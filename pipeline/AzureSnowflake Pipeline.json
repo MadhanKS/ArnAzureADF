@@ -15,9 +15,14 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"fieldList": [
-						"childItems"
-					],
+					"dataset": {
+						"referenceName": "BlobCSV_copy1",
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "EMP.csv"
+						}
+					},
+					"fieldList": [],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
 						"recursive": true,
@@ -75,6 +80,61 @@
 									"type": "DatasetReference"
 								}
 							}
+						},
+						{
+							"name": "SnowflakeCopy",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Lookup1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "SnowflakeSink",
+									"importSettings": {
+										"type": "SnowflakeImportCopyCommand"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "BlobData_copy1",
+									"type": "DatasetReference",
+									"parameters": {
+										"Filename": "EMP.csv"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "SnowflakeTable",
+									"type": "DatasetReference"
+								}
+							]
 						}
 					]
 				}
