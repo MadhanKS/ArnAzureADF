@@ -65,22 +65,17 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "DelimitedTextSource",
-									"storeSettings": {
-										"type": "AzureBlobStorageReadSettings",
-										"recursive": true,
-										"wildcardFileName": {
-											"value": "@item().name",
-											"type": "Expression"
-										},
-										"enablePartitionDiscovery": false
+									"type": "SnowflakeSource",
+									"query": {
+										"value": "@concat('select * from information_schema.tables where table_schema = ''PUBLIC'' and table_name =''', toUpper(first(split(item().name,'.'))),'''')",
+										"type": "Expression"
 									},
-									"formatSettings": {
-										"type": "DelimitedTextReadSettings"
+									"exportSettings": {
+										"type": "SnowflakeExportCopyCommand"
 									}
 								},
 								"dataset": {
-									"referenceName": "DelimitedText1",
+									"referenceName": "GetSnowSchema",
 									"type": "DatasetReference"
 								}
 							}
@@ -130,8 +125,14 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "DelimitedText1",
-									"type": "DatasetReference"
+									"referenceName": "BlobCSV",
+									"type": "DatasetReference",
+									"parameters": {
+										"FileName": {
+											"value": "@toUpper(first(split(activity('Lookup1').output.firstRow.sourceName,'.')))",
+											"type": "Expression"
+										}
+									}
 								}
 							],
 							"outputs": [
