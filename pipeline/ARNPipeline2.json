@@ -81,7 +81,7 @@
 							}
 						},
 						{
-							"name": "If Condition1",
+							"name": "If Schema Exists",
 							"type": "IfCondition",
 							"dependsOn": [
 								{
@@ -91,7 +91,7 @@
 									]
 								},
 								{
-									"activity": "Set variable2",
+									"activity": "Set FileType Variable",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -100,16 +100,16 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@contains(activity('Lookup1').output,'firstRow')",
+									"value": "@contains(activity('LookupSnowFlakeTables').output,'firstRow')",
 									"type": "Expression"
 								},
 								"ifTrueActivities": [
 									{
-										"name": "Copy data1",
+										"name": "Copy data from Blob to Snowflake",
 										"type": "Copy",
 										"dependsOn": [
 											{
-												"activity": "Set variable1",
+												"activity": "Set TableName Variable",
 												"dependencyConditions": [
 													"Succeeded"
 												]
@@ -167,7 +167,7 @@
 										]
 									},
 									{
-										"name": "Set variable1",
+										"name": "Set TableName Variable",
 										"type": "SetVariable",
 										"dependsOn": [],
 										"userProperties": [],
@@ -183,7 +183,7 @@
 							}
 						},
 						{
-							"name": "Set variable2",
+							"name": "Set FileType Variable",
 							"type": "SetVariable",
 							"dependsOn": [],
 							"userProperties": [],
