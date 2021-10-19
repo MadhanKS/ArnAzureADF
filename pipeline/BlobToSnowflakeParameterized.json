@@ -1,5 +1,5 @@
 {
-	"name": "ARNPipeline2",
+	"name": "BlobToSnowflakeParameterized",
 	"properties": {
 		"activities": [
 			{
