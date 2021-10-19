@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Get Metadata1",
+				"name": "GetFiles",
 				"type": "GetMetadata",
 				"dependsOn": [],
 				"policy": {
@@ -33,11 +33,11 @@
 				}
 			},
 			{
-				"name": "ForEach1",
+				"name": "ForEachFileItems",
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Get Metadata1",
+						"activity": "GetFiles",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -46,13 +46,13 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Get Metadata1').output.childItems",
+						"value": "@activity('GetFiles').output.childItems",
 						"type": "Expression"
 					},
 					"isSequential": true,
 					"activities": [
 						{
-							"name": "Lookup1",
+							"name": "LookupSnowFlakeTables",
 							"type": "Lookup",
 							"dependsOn": [],
 							"policy": {
@@ -85,7 +85,13 @@
 							"type": "IfCondition",
 							"dependsOn": [
 								{
-									"activity": "Lookup1",
+									"activity": "LookupSnowFlakeTables",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "Set variable2",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -124,7 +130,7 @@
 													"type": "AzureBlobStorageReadSettings",
 													"recursive": true,
 													"wildcardFileName": {
-														"value": "@concat(variables('TableName'),'.csv')",
+														"value": "@concat(variables('TableName'),'.',variables('FileType'))",
 														"type": "Expression"
 													},
 													"enablePartitionDiscovery": false
@@ -168,12 +174,25 @@
 										"typeProperties": {
 											"variableName": "TableName",
 											"value": {
-												"value": "@activity('Lookup1').output.firstRow.TABLE_NAME",
+												"value": "@activity('LookupSnowFlakeTables').output.firstRow.TABLE_NAME",
 												"type": "Expression"
 											}
 										}
 									}
 								]
+							}
+						},
+						{
+							"name": "Set variable2",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "FileType",
+								"value": {
+									"value": "@split(item().name,'.')[1]",
+									"type": "Expression"
+								}
 							}
 						}
 					]
@@ -182,6 +201,9 @@
 		],
 		"variables": {
 			"TableName": {
+				"type": "String"
+			},
+			"FileType": {
 				"type": "String"
 			}
 		},
