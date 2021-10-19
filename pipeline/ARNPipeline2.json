@@ -81,7 +81,7 @@
 							}
 						},
 						{
-							"name": "If Schema Exists",
+							"name": "If Table Exists",
 							"type": "IfCondition",
 							"dependsOn": [
 								{
