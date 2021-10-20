@@ -18,7 +18,7 @@
 		"schema": [],
 		"typeProperties": {
 			"schema": {
-				"value": "ARN_LANDING",
+				"value": "@dataset().SnowSchemaName",
 				"type": "Expression"
 			},
 			"table": {
