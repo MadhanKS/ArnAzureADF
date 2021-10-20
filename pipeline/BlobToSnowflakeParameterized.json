@@ -67,7 +67,7 @@
 								"source": {
 									"type": "SnowflakeSource",
 									"query": {
-										"value": "@concat('select * from information_schema.tables where table_schema = ''ARN_LANDING'' and table_name =''', toUpper(first(split(item().name,'.'))),'''')",
+										"value": "@concat('select * from information_schema.tables where table_schema = pipeline().parameters.SCHEMA_NAME and table_name =''', toUpper(first(split(item().name,'.'))),'''')",
 										"type": "Expression"
 									},
 									"exportSettings": {
@@ -181,6 +181,19 @@
 												"type": "Expression"
 											}
 										}
+									},
+									{
+										"name": "Set SchemaName",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "TableName",
+											"value": {
+												"value": "@pipeline().parameters.SCHEMA_NAME",
+												"type": "Expression"
+											}
+										}
 									}
 								]
 							}
@@ -202,11 +215,20 @@
 				}
 			}
 		],
+		"parameters": {
+			"SCHEMA_NAME": {
+				"type": "string",
+				"defaultValue": "ARN_LANDING"
+			}
+		},
 		"variables": {
 			"TableName": {
 				"type": "String"
 			},
 			"FileType": {
+				"type": "String"
+			},
+			"SchemaName": {
 				"type": "String"
 			}
 		},
