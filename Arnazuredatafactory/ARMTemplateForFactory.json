@@ -509,7 +509,7 @@
 										"source": {
 											"type": "SnowflakeSource",
 											"query": {
-												"value": "@concat('select * from information_schema.tables where table_schema = ''ARN_LANDING'' and table_name =''', toUpper(first(split(item().name,'.'))),'''')",
+												"value": "@concat('select * from information_schema.tables where table_schema = \"pipeline().parameters.SCHEMA_NAME\" and table_name =''', toUpper(first(split(item().name,'.'))),'''')",
 												"type": "Expression"
 											},
 											"exportSettings": {
@@ -608,6 +608,10 @@
 															"SnowFileName": {
 																"value": "@variables('TableName')",
 																"type": "Expression"
+															},
+															"SnowSchemaName": {
+																"value": "@pipeline().parameters.SCHEMA_NAME",
+																"type": "Expression"
 															}
 														}
 													}
@@ -650,11 +654,20 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
+				"parameters": {
+					"SCHEMA_NAME": {
+						"type": "string",
+						"defaultValue": "ARN_LANDING"
+					}
+				},
 				"variables": {
 					"TableName": {
 						"type": "String"
 					},
 					"FileType": {
+						"type": "String"
+					},
+					"SchemaVar": {
 						"type": "String"
 					}
 				},
@@ -903,6 +916,9 @@
 				"parameters": {
 					"SnowFileName": {
 						"type": "string"
+					},
+					"SnowSchemaName": {
+						"type": "string"
 					}
 				},
 				"annotations": [],
@@ -910,7 +926,7 @@
 				"schema": [],
 				"typeProperties": {
 					"schema": {
-						"value": "ARN_LANDING",
+						"value": "@dataset().SnowSchemaName",
 						"type": "Expression"
 					},
 					"table": {
