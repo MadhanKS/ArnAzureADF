@@ -188,7 +188,7 @@
 										"dependsOn": [],
 										"userProperties": [],
 										"typeProperties": {
-											"variableName": "TableName",
+											"variableName": "SchemaName",
 											"value": {
 												"value": "@pipeline().parameters.SCHEMA_NAME",
 												"type": "Expression"

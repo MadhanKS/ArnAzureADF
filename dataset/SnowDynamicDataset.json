@@ -8,6 +8,9 @@
 		"parameters": {
 			"SnowFileName": {
 				"type": "string"
+			},
+			"SnowSchemaName": {
+				"type": "string"
 			}
 		},
 		"annotations": [],
