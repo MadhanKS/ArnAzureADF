@@ -509,7 +509,7 @@
 										"source": {
 											"type": "SnowflakeSource",
 											"query": {
-												"value": "@concat('select * from information_schema.tables where table_schema = \"pipeline().parameters.SCHEMA_NAME\" and table_name =''', toUpper(first(split(item().name,'.'))),'''')",
+												"value": "@concat('select * from information_schema.tables where table_schema = ''', pipeline().parameters.SCHEMA_NAME,''' and table_name =''', toUpper(first(split(item().name,'.'))),'''')",
 												"type": "Expression"
 											},
 											"exportSettings": {
