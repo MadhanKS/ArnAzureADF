@@ -327,7 +327,7 @@
 				"schema": [],
 				"typeProperties": {
 					"schema": {
-						"value": "PUBLIC",
+						"value": "ARN_LANDING",
 						"type": "Expression"
 					},
 					"table": {
