@@ -219,7 +219,7 @@
 			"FileType": {
 				"type": "String"
 			},
-			"SchemaName": {
+			"SchemaVar": {
 				"type": "String"
 			}
 		},
