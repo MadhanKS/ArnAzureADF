@@ -166,7 +166,7 @@
 														"type": "Expression"
 													},
 													"SnowSchemaName": {
-														"value": "@pipeline().parameters.SCHEMA_NAME",
+														"value": "@variables('SchemaVar')",
 														"type": "Expression"
 													}
 												}
