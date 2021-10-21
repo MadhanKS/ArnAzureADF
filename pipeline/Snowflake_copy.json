@@ -75,8 +75,18 @@
 									}
 								},
 								"dataset": {
-									"referenceName": "GetSnowSchema",
-									"type": "DatasetReference"
+									"referenceName": "SnowDynamicDataset",
+									"type": "DatasetReference",
+									"parameters": {
+										"SnowFileName": {
+											"value": "@variables('TableName')",
+											"type": "Expression"
+										},
+										"SnowSchemaName": {
+											"value": "@toUpper(first(split(item().name,'.')))",
+											"type": "Expression"
+										}
+									}
 								}
 							}
 						},
