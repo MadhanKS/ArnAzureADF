@@ -387,7 +387,7 @@
 				],
 				"typeProperties": {
 					"schema": "PUBLIC",
-					"table": "EMP"
+					"table": "CUST"
 				}
 			},
 			"dependsOn": [
@@ -1129,9 +1129,18 @@
 											}
 										},
 										"dataset": {
-											"referenceName": "GetSnowSchema",
+											"referenceName": "SnowDynamicDataset",
 											"type": "DatasetReference",
-											"parameters": {}
+											"parameters": {
+												"SnowFileName": {
+													"value": "@variables('TableName')",
+													"type": "Expression"
+												},
+												"SnowSchemaName": {
+													"value": "@toUpper(first(split(item().name,'.')))",
+													"type": "Expression"
+												}
+											}
 										}
 									}
 								},
@@ -1266,7 +1275,7 @@
 													"method": "POST",
 													"headers": {},
 													"body": {
-														"value": "{\n    \"title\": \"PIPELINE SUCCEEDED!\",\n    \"message\": \"Pipeline run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
+														"value": "{\n    \"title\": \"PIPELINE SUCCEEDED!\",\n    \"message\": \"Pipeline for @{variables('TableName')} run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
 														"type": "Expression"
 													}
 												}
@@ -1316,7 +1325,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/BlobInputCSV')]",
-				"[concat(variables('factoryId'), '/datasets/GetSnowSchema')]",
 				"[concat(variables('factoryId'), '/datasets/SnowDynamicDataset')]"
 			]
 		}
