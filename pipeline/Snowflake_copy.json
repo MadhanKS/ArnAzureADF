@@ -141,6 +141,7 @@
 											},
 											"sink": {
 												"type": "SnowflakeSink",
+												"preCopyScript": "USE SCHEMA ARN_LANDING;",
 												"importSettings": {
 													"type": "SnowflakeImportCopyCommand",
 													"additionalCopyOptions": {
