@@ -13,6 +13,9 @@
 		},
 		"SnowflakeLinkedServices_connectionString": {
 			"value": ""
+		},
+		"Snowflake_copyactivity_connectionString": {
+			"value": ""
 		}
 	}
 }
