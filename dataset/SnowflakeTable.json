@@ -23,7 +23,7 @@
 		],
 		"typeProperties": {
 			"schema": "PUBLIC",
-			"table": "EMP"
+			"table": "CUST"
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
