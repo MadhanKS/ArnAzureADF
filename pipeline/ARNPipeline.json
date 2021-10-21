@@ -54,14 +54,7 @@
 			{
 				"name": "Emailnotification",
 				"type": "WebActivity",
-				"dependsOn": [
-					{
-						"activity": "Blob_To_Snowflake",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
