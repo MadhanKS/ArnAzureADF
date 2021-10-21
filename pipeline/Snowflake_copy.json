@@ -141,7 +141,6 @@
 											},
 											"sink": {
 												"type": "SnowflakeSink",
-												"preCopyScript": "USE SCHEMA ARN_LANDING;",
 												"importSettings": {
 													"type": "SnowflakeImportCopyCommand",
 													"additionalCopyOptions": {
@@ -167,7 +166,7 @@
 														"type": "Expression"
 													},
 													"SnowSchemaName": {
-														"value": "@variables('SchemaVar')",
+														"value": "@pipeline().parameters.SCHEMA_NAME",
 														"type": "Expression"
 													}
 												}
