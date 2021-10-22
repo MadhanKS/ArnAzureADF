@@ -152,7 +152,7 @@
 											"sink": {
 												"type": "SnowflakeSink",
 												"preCopyScript": {
-													"value": "@{truncate table pipeline().parameters.SCHEMA_NAME.variables('TableName')}",
+													"value": "truncate table @{pipeline().parameters.SCHEMA_NAME}.@{variables('TableName')} ",
 													"type": "Expression"
 												},
 												"importSettings": {
