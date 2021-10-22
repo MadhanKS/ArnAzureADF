@@ -158,11 +158,25 @@
 												"importSettings": {
 													"type": "SnowflakeImportCopyCommand",
 													"additionalCopyOptions": {
-														"ON_ERROR": "SKIP_FILE"
+														"ON_ERROR": "CONTINUE"
 													}
 												}
 											},
-											"enableStaging": false
+											"enableStaging": false,
+											"logSettings": {
+												"enableCopyActivityLog": true,
+												"copyActivityLogSettings": {
+													"logLevel": "Info",
+													"enableReliableLogging": true
+												},
+												"logLocationSettings": {
+													"linkedServiceName": {
+														"referenceName": "AzureBlobStorageLinkedServices",
+														"type": "LinkedServiceReference"
+													},
+													"path": "errorlog"
+												}
+											}
 										},
 										"inputs": [
 											{
