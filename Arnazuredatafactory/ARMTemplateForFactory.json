@@ -22,6 +22,10 @@
 		"Snowflake_copyactivity_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Snowflake_copyactivity'"
+		},
+		"Triggertest_properties_Snowflake_copy_parameters_SCHEMA_NAME": {
+			"type": "string",
+			"defaultValue": "ARN_LANDING"
 		}
 	},
 	"variables": {
@@ -1328,24 +1332,37 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/trigger1')]",
+			"name": "[concat(parameters('factoryName'), '/Triggertest')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Snowflake_copy",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"SCHEMA_NAME": "[parameters('Triggertest_properties_Snowflake_copy_parameters_SCHEMA_NAME')]"
+						}
+					}
+				],
 				"type": "ScheduleTrigger",
 				"typeProperties": {
 					"recurrence": {
 						"frequency": "Minute",
-						"interval": 17,
+						"interval": 2,
 						"startTime": "2021-10-13T14:20:00Z",
+						"endTime": "2021-10-26T21:10:00Z",
 						"timeZone": "UTC"
 					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Snowflake_copy')]"
+			]
 		}
 	]
 }

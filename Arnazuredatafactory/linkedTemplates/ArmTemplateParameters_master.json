@@ -17,6 +17,9 @@
 		"Snowflake_copyactivity_connectionString": {
 			"value": ""
 		},
+		"Triggertest_properties_Snowflake_copy_parameters_SCHEMA_NAME": {
+			"value": "ARN_LANDING"
+		},
 		"containerUri": {
 			"value": ""
 		},
