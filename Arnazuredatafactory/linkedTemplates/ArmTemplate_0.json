@@ -1205,14 +1205,32 @@
 													},
 													"sink": {
 														"type": "SnowflakeSink",
+														"preCopyScript": {
+															"value": "truncate table @{pipeline().parameters.SCHEMA_NAME}.@{variables('TableName')} ",
+															"type": "Expression"
+														},
 														"importSettings": {
 															"type": "SnowflakeImportCopyCommand",
 															"additionalCopyOptions": {
-																"ON_ERROR": "SKIP_FILE"
+																"ON_ERROR": "CONTINUE"
 															}
 														}
 													},
-													"enableStaging": false
+													"enableStaging": false,
+													"logSettings": {
+														"enableCopyActivityLog": true,
+														"copyActivityLogSettings": {
+															"logLevel": "Warning",
+															"enableReliableLogging": true
+														},
+														"logLocationSettings": {
+															"linkedServiceName": {
+																"referenceName": "AzureBlobStorageLinkedServices",
+																"type": "LinkedServiceReference"
+															},
+															"path": "errorlog"
+														}
+													}
 												},
 												"inputs": [
 													{
@@ -1325,7 +1343,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/BlobInputCSV')]",
-				"[concat(variables('factoryId'), '/datasets/SnowDynamicDataset')]"
+				"[concat(variables('factoryId'), '/datasets/SnowDynamicDataset')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedServices')]"
 			]
 		}
 	]
