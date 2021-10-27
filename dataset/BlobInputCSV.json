@@ -10,28 +10,13 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "SCHEMA.csv",
 				"container": "arndatafiles"
 			},
 			"columnDelimiter": ",",
-			"rowDelimiter": "\r\n",
 			"escapeChar": "\\",
-			"firstRowAsHeader": true,
+			"firstRowAsHeader": false,
 			"quoteChar": "\""
 		},
-		"schema": [
-			{
-				"name": "Table_Name",
-				"type": "String"
-			},
-			{
-				"name": "Schema_Name",
-				"type": "String"
-			},
-			{
-				"name": "File_Name",
-				"type": "String"
-			}
-		]
+		"schema": []
 	}
 }
