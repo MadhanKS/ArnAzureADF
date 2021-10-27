@@ -326,6 +326,18 @@
 						"value": "@contains(activity('GetJsonSchema').output,'CUST')",
 						"type": "Expression"
 					},
+					"ifFalseActivities": [
+						{
+							"name": "Set variable2",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "JsonFileName",
+								"value": "'File Not found'"
+							}
+						}
+					],
 					"ifTrueActivities": [
 						{
 							"name": "Set variable1",
