@@ -151,10 +151,6 @@
 											},
 											"sink": {
 												"type": "SnowflakeSink",
-												"preCopyScript": {
-													"value": "use schema PUBLIC;\ntruncate table @{variables('TableName')}",
-													"type": "Expression"
-												},
 												"importSettings": {
 													"type": "SnowflakeImportCopyCommand",
 													"additionalCopyOptions": {
