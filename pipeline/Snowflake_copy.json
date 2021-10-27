@@ -152,7 +152,7 @@
 											"sink": {
 												"type": "SnowflakeSink",
 												"preCopyScript": {
-													"value": "truncate table @{variables('TableName')}",
+													"value": "use schema PUBLIC;\ntruncate table @{variables('TableName')}",
 													"type": "Expression"
 												},
 												"importSettings": {
