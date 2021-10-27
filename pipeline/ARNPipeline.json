@@ -74,7 +74,8 @@
 					"dataset": {
 						"referenceName": "BlobInputCSV_copy1",
 						"type": "DatasetReference"
-					}
+					},
+					"firstRowOnly": false
 				}
 			}
 		],
