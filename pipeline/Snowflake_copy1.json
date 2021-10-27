@@ -279,7 +279,7 @@
 				}
 			},
 			{
-				"name": "GetJsonSchema",
+				"name": "Lookup1",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -305,8 +305,7 @@
 					"dataset": {
 						"referenceName": "ParamterFile",
 						"type": "DatasetReference"
-					},
-					"firstRowOnly": false
+					}
 				}
 			},
 			{
@@ -314,7 +313,7 @@
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "GetJsonSchema",
+						"activity": "Lookup1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -324,7 +323,7 @@
 				"typeProperties": {
 					"variableName": "JsonFileName",
 					"value": {
-						"value": "@activity('GetJsonSchema').output.value[0].CUST",
+						"value": "@activity('Lookup1').output.$['CUST']",
 						"type": "Expression"
 					}
 				}
