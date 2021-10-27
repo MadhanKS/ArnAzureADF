@@ -20,7 +20,6 @@
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
 							"recursive": true,
-							"wildcardFileName": "*.csv",
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
@@ -37,11 +36,8 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "BlobCSV",
-						"type": "DatasetReference",
-						"parameters": {
-							"FileName": "EMP.csv"
-						}
+						"referenceName": "BlobInputCSV_copy1",
+						"type": "DatasetReference"
 					}
 				],
 				"outputs": [

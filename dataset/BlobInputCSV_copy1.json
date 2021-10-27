@@ -10,7 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"container": "arndatafiles"
+				"fileName": "parameters.json",
+				"container": "config"
 			},
 			"columnDelimiter": ",",
 			"rowDelimiter": "\n",
