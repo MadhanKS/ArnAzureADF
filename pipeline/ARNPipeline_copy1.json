@@ -1,0 +1,59 @@
+{
+	"name": "ARNPipeline_copy1",
+	"properties": {
+		"activities": [
+			{
+				"name": "Blob_To_Snowflake",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"wildcardFileName": "*.csv",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SnowflakeSink",
+						"importSettings": {
+							"type": "SnowflakeImportCopyCommand"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "BlobCSV",
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "EMP.csv"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SnowflakeTable",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2021-10-12T14:09:06Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -158,7 +158,7 @@
 												"importSettings": {
 													"type": "SnowflakeImportCopyCommand",
 													"additionalCopyOptions": {
-														"ON_ERROR": "CONTINUE"
+														"ON_ERROR": "ABORT_STATEMENT"
 													}
 												}
 											},
