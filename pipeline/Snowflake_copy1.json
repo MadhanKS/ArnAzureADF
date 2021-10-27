@@ -323,7 +323,7 @@
 				"typeProperties": {
 					"variableName": "JsonFileName",
 					"value": {
-						"value": "@activity('Lookup1').output.$['CUST']",
+						"value": "@activity('Lookup1').output.[0]['CUST']",
 						"type": "Expression"
 					}
 				}
