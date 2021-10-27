@@ -151,10 +151,14 @@
 											},
 											"sink": {
 												"type": "SnowflakeSink",
+												"preCopyScript": {
+													"value": "truncate table @{variables('TableName')}",
+													"type": "Expression"
+												},
 												"importSettings": {
 													"type": "SnowflakeImportCopyCommand",
 													"additionalCopyOptions": {
-														"ON_ERROR": "SKIP_FILE"
+														"ON_ERROR": "ABORT_STATEMENT"
 													}
 												}
 											},
@@ -220,6 +224,34 @@
 											"method": "POST",
 											"body": {
 												"value": "{\n    \"title\": \"PIPELINE SUCCEEDED!\",\n    \"message\": \"Pipeline for @{variables('TableName')} run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
+												"type": "Expression"
+											}
+										}
+									},
+									{
+										"name": "Emailnotification_copy1",
+										"type": "WebActivity",
+										"dependsOn": [
+											{
+												"activity": "Copy data from Blob to Snowflake",
+												"dependencyConditions": [
+													"Failed"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"url": "https://prod-23.australiaeast.logic.azure.com:443/workflows/d8931bd55622434780d5c0f6a0e887df/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Fwz947WiGUqHh5dtvm1GSxFM14YUbIhpTYwFUxix65Q",
+											"method": "POST",
+											"body": {
+												"value": "{\n    \"title\": \"PIPELINE Failed!\",\n    \"message\": \"Pipeline for @{variables('TableName')} run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
 												"type": "Expression"
 											}
 										}
