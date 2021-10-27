@@ -305,7 +305,8 @@
 					"dataset": {
 						"referenceName": "ParamterFile",
 						"type": "DatasetReference"
-					}
+					},
+					"firstRowOnly": false
 				}
 			},
 			{
