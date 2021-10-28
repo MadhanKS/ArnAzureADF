@@ -270,7 +270,8 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"container": "arndatafiles"
+						"fileName": "parameters.json",
+						"container": "config"
 					},
 					"columnDelimiter": ",",
 					"rowDelimiter": "\n",
@@ -303,6 +304,103 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/ADFSnowflake Linkseevice')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParamterFile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorageLinkedServices",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "parameters.json",
+						"container": "config"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"CUST": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"tblName": {
+										"type": "string"
+									},
+									"stageName": {
+										"type": "string"
+									},
+									"fileFormat": {
+										"type": "string"
+									},
+									"schema": {
+										"type": "string"
+									},
+									"filename": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"EMP": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"tblName": {
+										"type": "string"
+									},
+									"stageName": {
+										"type": "string"
+									},
+									"fileFormat": {
+										"type": "string"
+									},
+									"schema": {
+										"type": "string"
+									},
+									"filename": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"DATE_DIM": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"tblName": {
+										"type": "string"
+									},
+									"stageName": {
+										"type": "string"
+									},
+									"fileFormat": {
+										"type": "string"
+									},
+									"schema": {
+										"type": "string"
+									},
+									"filename": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedServices')]"
 			]
 		},
 		{
@@ -376,6 +474,112 @@
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ARNPipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Blob_To_Snowflake",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "SnowflakeSink",
+								"importSettings": {
+									"type": "SnowflakeImportCopyCommand"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "BlobInputCSV_copy1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SnowflakeTable",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "ParamterFile",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-10-12T14:09:06Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/BlobInputCSV_copy1')]",
+				"[concat(variables('factoryId'), '/datasets/SnowflakeTable')]",
+				"[concat(variables('factoryId'), '/datasets/ParamterFile')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ARNPipeline_copy1')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1185,32 +1389,14 @@
 													},
 													"sink": {
 														"type": "SnowflakeSink",
-														"preCopyScript": {
-															"value": "truncate table @{pipeline().parameters.SCHEMA_NAME}.@{variables('TableName')} ",
-															"type": "Expression"
-														},
 														"importSettings": {
 															"type": "SnowflakeImportCopyCommand",
 															"additionalCopyOptions": {
-																"ON_ERROR": "CONTINUE"
+																"ON_ERROR": "ABORT_STATEMENT"
 															}
 														}
 													},
-													"enableStaging": false,
-													"logSettings": {
-														"enableCopyActivityLog": true,
-														"copyActivityLogSettings": {
-															"logLevel": "Warning",
-															"enableReliableLogging": true
-														},
-														"logLocationSettings": {
-															"linkedServiceName": {
-																"referenceName": "AzureBlobStorageLinkedServices",
-																"type": "LinkedServiceReference"
-															},
-															"path": "errorlog"
-														}
-													}
+													"enableStaging": false
 												},
 												"inputs": [
 													{
@@ -1277,6 +1463,35 @@
 														"type": "Expression"
 													}
 												}
+											},
+											{
+												"name": "Emailnotification_copy1",
+												"type": "WebActivity",
+												"dependsOn": [
+													{
+														"activity": "Copy data from Blob to Snowflake",
+														"dependencyConditions": [
+															"Failed"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"url": "https://prod-23.australiaeast.logic.azure.com:443/workflows/d8931bd55622434780d5c0f6a0e887df/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Fwz947WiGUqHh5dtvm1GSxFM14YUbIhpTYwFUxix65Q",
+													"method": "POST",
+													"headers": {},
+													"body": {
+														"value": "{\n    \"title\": \"PIPELINE Failed!\",\n    \"message\": \"Pipeline for @{variables('TableName')} run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
+														"type": "Expression"
+													}
+												}
 											}
 										]
 									}
@@ -1323,8 +1538,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/BlobInputCSV')]",
-				"[concat(variables('factoryId'), '/datasets/SnowDynamicDataset')]",
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedServices')]"
+				"[concat(variables('factoryId'), '/datasets/SnowDynamicDataset')]"
 			]
 		}
 	]
