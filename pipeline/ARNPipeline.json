@@ -23,14 +23,22 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "DelimitedTextSource",
+						"type": "JsonSource",
+						"additionalColumns": [
+							{
+								"value": "$$COLUMN:$.CUST"
+							},
+							{
+								"value": "$$COLUMN:$.EMP"
+							}
+						],
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
 							"recursive": true,
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
-							"type": "DelimitedTextReadSettings"
+							"type": "JsonReadSettings"
 						}
 					},
 					"sink": {
@@ -43,7 +51,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "BlobInputCSV_copy1",
+						"referenceName": "ParamterFile",
 						"type": "DatasetReference"
 					}
 				],
@@ -68,18 +76,19 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "JsonSource",
+						"type": "DelimitedTextSource",
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
 							"recursive": true,
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
-							"type": "JsonReadSettings"
+							"type": "DelimitedTextReadSettings",
+							"skipLineCount": 1
 						}
 					},
 					"dataset": {
-						"referenceName": "ParamterFile",
+						"referenceName": "SchemaRead",
 						"type": "DatasetReference"
 					},
 					"firstRowOnly": false
