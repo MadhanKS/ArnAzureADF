@@ -24,14 +24,6 @@
 				"typeProperties": {
 					"source": {
 						"type": "JsonSource",
-						"additionalColumns": [
-							{
-								"value": "$$COLUMN:$.CUST"
-							},
-							{
-								"value": "$$COLUMN:$.EMP"
-							}
-						],
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
 							"recursive": true,
