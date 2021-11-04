@@ -1,0 +1,48 @@
+{
+	"name": "Date_dataflow3",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"name": "source1"
+				},
+				{
+					"name": "empTable"
+				}
+			],
+			"sinks": [
+				{
+					"name": "sink1"
+				},
+				{
+					"name": "sink2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "addingisActive"
+				},
+				{
+					"name": "Select1"
+				},
+				{
+					"name": "Lookup1"
+				},
+				{
+					"name": "ExistingRows"
+				},
+				{
+					"name": "Select2"
+				},
+				{
+					"name": "DerivedColumn1"
+				},
+				{
+					"name": "AlterRow1"
+				}
+			],
+			"script": "parameters{\n\tLanding_Sch as string ('ARN_LANDING'),\n\tCurated_Sch as string ('ARN_CURATED'),\n\tTbl_Name as string ('EMP')\n}\nsource(output(\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> source1\nsource(output(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> empTable\nsource1 derive(isActive = 1,\n\t\tlastmodifieddate = currentUTC()) ~> addingisActive\nempTable select(mapColumn(\n\t\tCurated_SURRKEY = SURRKEY,\n\t\tCurated_EMP_ID = EMP_ID,\n\t\tCurated_EMP_NAME = EMP_NAME,\n\t\tCurated_IS_ACTIVE = IS_ACTIVE,\n\t\tCurated_LAST_MODIFIED_DATE = LAST_MODIFIED_DATE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nsource1, Select1 lookup(EMP_ID == Curated_EMP_ID,\n\tmultiple: true,\n\tbroadcast: 'auto')~> Lookup1\nLookup1 filter(!isNull(Curated_EMP_ID)) ~> ExistingRows\nExistingRows select(mapColumn(\n\t\tCurated_SURRKEY,\n\t\tCurated_EMP_ID,\n\t\tCurated_EMP_NAME,\n\t\tCurated_IS_ACTIVE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect2 derive(Curated_IS_ACTIVE = 0) ~> DerivedColumn1\nDerivedColumn1 alterRow(updateIf(1==1)) ~> AlterRow1\naddingisActive sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\tmapColumn(\n\t\tEMP_ID,\n\t\tEMP_NAME,\n\t\tIS_ACTIVE = isActive,\n\t\tLAST_MODIFIED_DATE = lastmodifieddate\n\t)) ~> sink1\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\tmapColumn(\n\t\tSURRKEY = Curated_SURRKEY,\n\t\tEMP_ID = Curated_EMP_ID,\n\t\tEMP_NAME = Curated_EMP_NAME,\n\t\tIS_ACTIVE = Curated_IS_ACTIVE\n\t)) ~> sink2"
+		}
+	}
+}
