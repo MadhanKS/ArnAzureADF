@@ -5,6 +5,9 @@
 		"factoryName": {
 			"value": "Arnazuredatafactory"
 		},
+		"AzureBlobStoragetransform_connectionString": {
+			"value": ""
+		},
 		"ADFSnowflake Linkseevice_connectionString": {
 			"value": ""
 		},
@@ -15,6 +18,12 @@
 			"value": ""
 		},
 		"Snowflake_copyactivity_connectionString": {
+			"value": ""
+		},
+		"Source_Snowflake_connectionString": {
+			"value": ""
+		},
+		"Target_Snowflake_connectionString": {
 			"value": ""
 		}
 	}

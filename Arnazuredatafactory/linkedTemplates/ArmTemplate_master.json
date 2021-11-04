@@ -7,6 +7,10 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "Arnazuredatafactory"
 		},
+		"AzureBlobStoragetransform_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStoragetransform'"
+		},
 		"ADFSnowflake Linkseevice_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ADFSnowflake Linkseevice'"
@@ -22,6 +26,14 @@
 		"Snowflake_copyactivity_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Snowflake_copyactivity'"
+		},
+		"Source_Snowflake_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Source_Snowflake'"
+		},
+		"Target_Snowflake_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Target_Snowflake'"
 		},
 		"containerUri": {
 			"type": "string",
@@ -50,6 +62,9 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"AzureBlobStoragetransform_connectionString": {
+						"value": "[parameters('AzureBlobStoragetransform_connectionString')]"
+					},
 					"ADFSnowflake Linkseevice_connectionString": {
 						"value": "[parameters('ADFSnowflake Linkseevice_connectionString')]"
 					},
@@ -61,6 +76,12 @@
 					},
 					"Snowflake_copyactivity_connectionString": {
 						"value": "[parameters('Snowflake_copyactivity_connectionString')]"
+					},
+					"Source_Snowflake_connectionString": {
+						"value": "[parameters('Source_Snowflake_connectionString')]"
+					},
+					"Target_Snowflake_connectionString": {
+						"value": "[parameters('Target_Snowflake_connectionString')]"
 					}
 				}
 			},
