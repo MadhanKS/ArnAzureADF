@@ -193,7 +193,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"functionName": "copytosnowflakeapp",
+							"functionName": "Testcopyfunc",
 							"method": "POST",
 							"headers": {},
 							"body": {
