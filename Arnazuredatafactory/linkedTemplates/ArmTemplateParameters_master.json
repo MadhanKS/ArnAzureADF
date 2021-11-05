@@ -21,7 +21,7 @@
 			"value": ""
 		},
 		"LS_AZURE_COPY_FUNC_properties_typeProperties_functionAppUrl": {
-			"value": "https://copytosnowflakeapp.azurewebsites.net"
+			"value": "https://copytosnowflakeapp.azurewebsites.net/api/Testcopyfunc?code=P1aD6aa1ytl36QN987nWCT2GR1jteRg0vwM0G9/13ecQKG8hkEANLg=="
 		},
 		"SnowflakeLinkedServices_connectionString": {
 			"value": ""
