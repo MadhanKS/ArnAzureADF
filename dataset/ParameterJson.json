@@ -1,0 +1,92 @@
+{
+	"name": "ParameterJson",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ParameterFile",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "parameters.json",
+				"container": "config"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"CUST": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"tblName": {
+								"type": "string"
+							},
+							"stageName": {
+								"type": "string"
+							},
+							"fileFormat": {
+								"type": "string"
+							},
+							"schema": {
+								"type": "string"
+							},
+							"filename": {
+								"type": "string"
+							}
+						}
+					}
+				},
+				"EMP": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"tblName": {
+								"type": "string"
+							},
+							"stageName": {
+								"type": "string"
+							},
+							"fileFormat": {
+								"type": "string"
+							},
+							"schema": {
+								"type": "string"
+							},
+							"filename": {
+								"type": "string"
+							}
+						}
+					}
+				},
+				"DATE_DIM": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"tblName": {
+								"type": "string"
+							},
+							"stageName": {
+								"type": "string"
+							},
+							"fileFormat": {
+								"type": "string"
+							},
+							"schema": {
+								"type": "string"
+							},
+							"filename": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
