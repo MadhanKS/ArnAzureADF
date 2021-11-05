@@ -1,0 +1,32 @@
+{
+	"name": "PL_AZURE_COPY_FUNC",
+	"properties": {
+		"activities": [
+			{
+				"name": "Azure Function1",
+				"type": "AzureFunctionActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"functionName": "copytosnowflakeapp",
+					"method": "POST",
+					"body": {
+						"stg": "STG"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_AZURE_COPY_FUNC",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"annotations": []
+	}
+}
