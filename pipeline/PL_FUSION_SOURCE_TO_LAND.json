@@ -3,11 +3,12 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "GetFiles",
+				"name": "GET_MET_CONTAINER_FILE",
+				"description": "",
 				"type": "GetMetadata",
 				"dependsOn": [
 					{
-						"activity": "Set variable1",
+						"activity": "VAR_TO_GET_CUST",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -23,7 +24,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "BlobInputCSV",
+						"referenceName": "DS_FUSION_BLOB_INPUT_CSV",
 						"type": "DatasetReference"
 					},
 					"fieldList": [
@@ -40,11 +41,11 @@
 				}
 			},
 			{
-				"name": "ForEachFileItems",
+				"name": "FOR_EACH_CONTAINER_FILE",
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "GetFiles",
+						"activity": "GET_MET_CONTAINER_FILE",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -53,7 +54,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('GetFiles').output.childItems",
+						"value": "@activity('GET_MET_CONTAINER_FILE').output.childItems",
 						"type": "Expression"
 					},
 					"isSequential": true,
@@ -279,7 +280,8 @@
 				}
 			},
 			{
-				"name": "Lookup1",
+				"name": "LKP_PARAMETER_JSON",
+				"description": "This lookup is to get the values from json file.",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -310,11 +312,11 @@
 				}
 			},
 			{
-				"name": "Set variable1",
+				"name": "VAR_TO_GET_CUST",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "Lookup1",
+						"activity": "LKP_PARAMETER_JSON",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -324,7 +326,7 @@
 				"typeProperties": {
 					"variableName": "JsonFileName",
 					"value": {
-						"value": "@activity('Lookup1').output.firstRow['CUST']",
+						"value": "@activity('LKP_PARAMETER_JSON').output.firstRow['CUST']",
 						"type": "Expression"
 					}
 				}
