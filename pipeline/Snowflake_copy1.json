@@ -347,7 +347,7 @@
 				"type": "String"
 			},
 			"JsonFileName": {
-				"type": "String"
+				"type": "Array"
 			}
 		},
 		"annotations": []
