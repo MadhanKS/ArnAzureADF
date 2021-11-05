@@ -303,7 +303,7 @@
 						}
 					},
 					"dataset": {
-						"referenceName": "ParamterFile",
+						"referenceName": "DS_FUSION_PARAMETER_JSON",
 						"type": "DatasetReference"
 					},
 					"firstRowOnly": true
