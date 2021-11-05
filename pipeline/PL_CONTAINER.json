@@ -97,7 +97,7 @@
 				"typeProperties": {
 					"variableName": "Look_File",
 					"value": {
-						"value": "@activity('Lookup1').output.value",
+						"value": "@activity('Lookup1').output.firstRow['CUST']",
 						"type": "Expression"
 					}
 				}
@@ -108,7 +108,7 @@
 				"type": "String"
 			},
 			"Get_File": {
-				"type": "String"
+				"type": "Array"
 			}
 		},
 		"annotations": []
