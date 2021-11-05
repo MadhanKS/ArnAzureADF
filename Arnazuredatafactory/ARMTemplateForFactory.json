@@ -11,6 +11,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStoragetransform'"
 		},
+		"LS_AZURE_COPY_FUNC_functionKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'functionKey' of 'LS_AZURE_COPY_FUNC'"
+		},
+		"ParameterFile_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ParameterFile'"
+		},
 		"ADFSnowflake Linkseevice_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ADFSnowflake Linkseevice'"
@@ -18,6 +26,10 @@
 		"AzureBlobStorageLinkedServices_sasUri": {
 			"type": "secureString",
 			"metadata": "Secure string for 'sasUri' of 'AzureBlobStorageLinkedServices'"
+		},
+		"LS_AZURE_COPY_FUNC_properties_typeProperties_functionAppUrl": {
+			"type": "string",
+			"defaultValue": "https://copytosnowflakeapp.azurewebsites.net"
 		},
 		"SnowflakeLinkedServices_connectionString": {
 			"type": "secureString",
@@ -822,12 +834,12 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataset": {
-								"referenceName": "BlobInputCSV",
+								"referenceName": "ParameterJson",
 								"type": "DatasetReference",
 								"parameters": {}
 							},
 							"fieldList": [
-								"childItems"
+								"itemName"
 							],
 							"storeSettings": {
 								"type": "AzureBlobStorageReadSettings",
@@ -835,7 +847,7 @@
 								"enablePartitionDiscovery": false
 							},
 							"formatSettings": {
-								"type": "DelimitedTextReadSettings"
+								"type": "JsonReadSettings"
 							}
 						}
 					},
@@ -853,7 +865,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"items": {
-								"value": "@activity('Get Metadata1').output.childitems",
+								"value": "@activity('Get Metadata1').output.childitems.itemname",
 								"type": "Expression"
 							},
 							"isSequential": true,
@@ -882,12 +894,15 @@
 				"variables": {
 					"Fileexistance": {
 						"type": "String"
+					},
+					"Filecheck": {
+						"type": "String"
 					}
 				},
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/BlobInputCSV')]"
+				"[concat(variables('factoryId'), '/datasets/ParameterJson')]"
 			]
 		},
 		{
@@ -937,6 +952,216 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/Date_dataflow3')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_AZURE_COPY_FUNC')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Azure Function1",
+						"type": "AzureFunctionActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"functionName": "copytosnowflakeapp",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"stg": "STG"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "LS_AZURE_COPY_FUNC",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_AZURE_COPY_FUNC')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_CONTAINER')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Metadata1",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "BlobInputCSV",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobStorageReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "ParameterJson",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Get Metadata1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Get_File",
+							"value": {
+								"value": "@activity('Get Metadata1').output.childItems",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set variable2",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Look_File",
+							"value": {
+								"value": "@activity('Lookup1').output.firstRow['CUST']",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "Get Metadata1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@equals(\nactivity('Get Metadata1').output.childItems,\nactivity('Lookup1').output.firstRow['CUST']\n)",
+								"type": "Expression"
+							},
+							"ifTrueActivities": [
+								{
+									"name": "Set variable3",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "Msg_test",
+										"value": "Hi"
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"Look_File": {
+						"type": "Array"
+					},
+					"Get_File": {
+						"type": "Array"
+					},
+					"Msg_test": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/BlobInputCSV')]",
+				"[concat(variables('factoryId'), '/datasets/ParameterJson')]"
 			]
 		},
 		{
@@ -1931,6 +2156,103 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ParameterJson')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ParameterFile",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "parameters.json",
+						"container": "config"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"CUST": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"tblName": {
+										"type": "string"
+									},
+									"stageName": {
+										"type": "string"
+									},
+									"fileFormat": {
+										"type": "string"
+									},
+									"schema": {
+										"type": "string"
+									},
+									"filename": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"EMP": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"tblName": {
+										"type": "string"
+									},
+									"stageName": {
+										"type": "string"
+									},
+									"fileFormat": {
+										"type": "string"
+									},
+									"schema": {
+										"type": "string"
+									},
+									"filename": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"DATE_DIM": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"tblName": {
+										"type": "string"
+									},
+									"stageName": {
+										"type": "string"
+									},
+									"fileFormat": {
+										"type": "string"
+									},
+									"schema": {
+										"type": "string"
+									},
+									"filename": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ParameterFile')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ParamterFile')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2174,6 +2496,37 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LS_AZURE_COPY_FUNC')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureFunction",
+				"typeProperties": {
+					"functionAppUrl": "[parameters('LS_AZURE_COPY_FUNC_properties_typeProperties_functionAppUrl')]",
+					"functionKey": {
+						"type": "SecureString",
+						"value": "[parameters('LS_AZURE_COPY_FUNC_functionKey')]"
+					},
+					"authentication": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParameterFile')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('ParameterFile_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/SnowflakeLinkedServices')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -2287,7 +2640,7 @@
 							"name": "Lookup1"
 						}
 					],
-					"script": "source(output(\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: 'select * from ARN_LANDING.EMPLOYEE',\n\tformat: 'query') ~> Upsertlogic\nsource(output(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: 'select * from arn_curated.employee',\n\tformat: 'query') ~> employeeTable\nUpsertlogic derive(isActive = 1,\n\t\tlastmodifieddate = currentUTC()) ~> addingisActive\nLookup1 filter(!isNull(Curated_EMP_ID)) ~> ExistingRows\nExistingRows select(mapColumn(\n\t\tCurated_SURRKEY,\n\t\tCurated_EMP_ID,\n\t\tCurated_EMP_NAME,\n\t\tCurated_IS_ACTIVE,\n\t\tCurated_LAST_MODIFIED_DATE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect2 derive(Curated_IS_ACTIVE = 0) ~> DerivedColumn1\nDerivedColumn1 alterRow(updateIf(1==1)) ~> AlterRow1\nemployeeTable select(mapColumn(\n\t\tCurated_SURRKEY = SURRKEY,\n\t\tCurated_EMP_ID = EMP_ID,\n\t\tCurated_EMP_NAME = EMP_NAME,\n\t\tCurated_IS_ACTIVE = IS_ACTIVE,\n\t\tCurated_LAST_MODIFIED_DATE = LAST_MODIFIED_DATE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> renametargetcolumn\nUpsertlogic, renametargetcolumn lookup(EMP_ID == Curated_EMP_ID,\n\tmultiple: true,\n\tbroadcast: 'auto')~> Lookup1\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['SURRKEY'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\tstageInsert: true,\n\tmapColumn(\n\t\tSURRKEY = Curated_SURRKEY,\n\t\tEMP_ID = Curated_EMP_ID,\n\t\tEMP_NAME = Curated_EMP_NAME,\n\t\tIS_ACTIVE = Curated_IS_ACTIVE,\n\t\tLAST_MODIFIED_DATE = Curated_LAST_MODIFIED_DATE\n\t)) ~> sink2\naddingisActive sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\tstageInsert: true,\n\tmapColumn(\n\t\tEMP_ID,\n\t\tEMP_NAME,\n\t\tIS_ACTIVE = isActive,\n\t\tLAST_MODIFIED_DATE = lastmodifieddate\n\t)) ~> sink1"
+					"script": "source(output(\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: 'select * from ARN_LANDING.EMPLOYEE',\n\tformat: 'query') ~> Upsertlogic\nsource(output(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: 'select * from arn_curated.employee',\n\tformat: 'query') ~> employeeTable\nUpsertlogic derive(isActive = 1,\n\t\tlastmodifieddate = currentUTC()) ~> addingisActive\nLookup1 filter(!isNull(Curated_EMP_ID)) ~> ExistingRows\nExistingRows select(mapColumn(\n\t\tCurated_SURRKEY,\n\t\tCurated_EMP_ID,\n\t\tCurated_EMP_NAME,\n\t\tCurated_IS_ACTIVE,\n\t\tCurated_LAST_MODIFIED_DATE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect2 derive(Curated_IS_ACTIVE = 0) ~> DerivedColumn1\nDerivedColumn1 alterRow(updateIf(1==1)) ~> AlterRow1\nemployeeTable select(mapColumn(\n\t\tCurated_SURRKEY = SURRKEY,\n\t\tCurated_EMP_ID = EMP_ID,\n\t\tCurated_EMP_NAME = EMP_NAME,\n\t\tCurated_IS_ACTIVE = IS_ACTIVE,\n\t\tCurated_LAST_MODIFIED_DATE = LAST_MODIFIED_DATE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> renametargetcolumn\nUpsertlogic, renametargetcolumn lookup(EMP_ID == Curated_EMP_ID,\n\tmultiple: true,\n\tbroadcast: 'auto')~> Lookup1\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['SURRKEY'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\tmapColumn(\n\t\tSURRKEY = Curated_SURRKEY,\n\t\tEMP_ID = Curated_EMP_ID,\n\t\tEMP_NAME = Curated_EMP_NAME,\n\t\tIS_ACTIVE = Curated_IS_ACTIVE,\n\t\tLAST_MODIFIED_DATE = Curated_LAST_MODIFIED_DATE\n\t)) ~> sink2\naddingisActive sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\tstageInsert: true,\n\tmapColumn(\n\t\tEMP_ID,\n\t\tEMP_NAME,\n\t\tIS_ACTIVE = isActive,\n\t\tLAST_MODIFIED_DATE = lastmodifieddate\n\t)) ~> sink1"
 				}
 			},
 			"dependsOn": [

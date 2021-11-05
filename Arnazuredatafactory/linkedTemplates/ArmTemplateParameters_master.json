@@ -8,11 +8,20 @@
 		"AzureBlobStoragetransform_connectionString": {
 			"value": ""
 		},
+		"LS_AZURE_COPY_FUNC_functionKey": {
+			"value": ""
+		},
+		"ParameterFile_connectionString": {
+			"value": ""
+		},
 		"ADFSnowflake Linkseevice_connectionString": {
 			"value": ""
 		},
 		"AzureBlobStorageLinkedServices_sasUri": {
 			"value": ""
+		},
+		"LS_AZURE_COPY_FUNC_properties_typeProperties_functionAppUrl": {
+			"value": "https://copytosnowflakeapp.azurewebsites.net"
 		},
 		"SnowflakeLinkedServices_connectionString": {
 			"value": ""
