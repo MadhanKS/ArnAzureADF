@@ -15,7 +15,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"functionName": "copytosnowflakeapp",
+					"functionName": "Testcopyfunc",
 					"method": "POST",
 					"body": {
 						"stg": "STG"
