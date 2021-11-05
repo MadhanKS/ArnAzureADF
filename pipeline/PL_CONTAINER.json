@@ -101,14 +101,54 @@
 						"type": "Expression"
 					}
 				}
+			},
+			{
+				"name": "If Condition1",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "Get Metadata1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(\nactivity('Get Metadata1').output.childItems,\nactivity('Lookup1').output.firstRow['CUST']\n)",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "Set variable3",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "Msg_test",
+								"value": "Hi"
+							}
+						}
+					]
+				}
 			}
 		],
 		"variables": {
 			"Look_File": {
-				"type": "String"
+				"type": "Array"
 			},
 			"Get_File": {
 				"type": "Array"
+			},
+			"Msg_test": {
+				"type": "String"
 			}
 		},
 		"annotations": []
