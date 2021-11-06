@@ -31,7 +31,7 @@
 						"importSettings": {
 							"type": "SnowflakeImportCopyCommand",
 							"additionalCopyOptions": {
-								"ON_ERROR": "ABORT_STATEMENT"
+								"ON_ERROR": "CONTINUE"
 							}
 						}
 					},
@@ -49,7 +49,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"SnowFileName": {
-								"value": "CUST",
+								"value": "EMPLOYEE",
 								"type": "Expression"
 							},
 							"SnowSchemaName": {
