@@ -2,7 +2,7 @@
 	"name": "DS_FUSION_BLOB_INPUT_CSV",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AzureBlobStorageLinkedServices",
+			"referenceName": "LS_FUSION_BLOB_INPUT_CSV",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
@@ -13,6 +13,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
+				"fileName": "CUST.csv",
 				"container": "arndatafiles"
 			},
 			"columnDelimiter": ",",
