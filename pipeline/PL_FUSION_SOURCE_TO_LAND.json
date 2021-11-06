@@ -60,7 +60,7 @@
 					"isSequential": true,
 					"activities": [
 						{
-							"name": "LookupSnowFlakeTables",
+							"name": "LKP_SNOWFLAKE_BLOB_CONTAINER",
 							"type": "Lookup",
 							"dependsOn": [],
 							"policy": {
@@ -99,17 +99,17 @@
 							}
 						},
 						{
-							"name": "If Table Exists",
+							"name": "IF_TABLE_EXISTS",
 							"type": "IfCondition",
 							"dependsOn": [
 								{
-									"activity": "LookupSnowFlakeTables",
+									"activity": "LKP_SNOWFLAKE_BLOB_CONTAINER",
 									"dependencyConditions": [
 										"Succeeded"
 									]
 								},
 								{
-									"activity": "Set FileType Variable",
+									"activity": "VAR_FILETYPE_VARIABLE",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -118,16 +118,16 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@contains(activity('LookupSnowFlakeTables').output,'firstRow')",
+									"value": "@contains(activity('LKP_SNOWFLAKE_BLOB_CONTAINER').output,'firstRow')",
 									"type": "Expression"
 								},
 								"ifTrueActivities": [
 									{
-										"name": "Copy data from Blob to Snowflake",
+										"name": "CPY_SOURCE_TO_LANDING",
 										"type": "Copy",
 										"dependsOn": [
 											{
-												"activity": "Set TableName Variable",
+												"activity": "VAR_TABLE_NAME",
 												"dependencyConditions": [
 													"Succeeded"
 												]
@@ -192,14 +192,14 @@
 										]
 									},
 									{
-										"name": "Set TableName Variable",
+										"name": "VAR_TABLE_NAME",
 										"type": "SetVariable",
 										"dependsOn": [],
 										"userProperties": [],
 										"typeProperties": {
 											"variableName": "TableName",
 											"value": {
-												"value": "@activity('LookupSnowFlakeTables').output.firstRow.TABLE_NAME",
+												"value": "@activity('LKP_SNOWFLAKE_BLOB_CONTAINER').output.firstRow.TABLE_NAME",
 												"type": "Expression"
 											}
 										}
@@ -209,7 +209,7 @@
 										"type": "WebActivity",
 										"dependsOn": [
 											{
-												"activity": "Copy data from Blob to Snowflake",
+												"activity": "CPY_SOURCE_TO_LANDING",
 												"dependencyConditions": [
 													"Succeeded"
 												]
@@ -237,7 +237,7 @@
 										"type": "WebActivity",
 										"dependsOn": [
 											{
-												"activity": "Copy data from Blob to Snowflake",
+												"activity": "CPY_SOURCE_TO_LANDING",
 												"dependencyConditions": [
 													"Failed"
 												]
@@ -264,7 +264,7 @@
 							}
 						},
 						{
-							"name": "Set FileType Variable",
+							"name": "VAR_FILETYPE_VARIABLE",
 							"type": "SetVariable",
 							"dependsOn": [],
 							"userProperties": [],
