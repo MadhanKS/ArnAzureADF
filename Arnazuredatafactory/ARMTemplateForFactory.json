@@ -1207,7 +1207,7 @@
 								"importSettings": {
 									"type": "SnowflakeImportCopyCommand",
 									"additionalCopyOptions": {
-										"ON_ERROR": "ABORT_STATEMENT"
+										"ON_ERROR": "CONTINUE"
 									}
 								}
 							},
@@ -1226,7 +1226,7 @@
 								"type": "DatasetReference",
 								"parameters": {
 									"SnowFileName": {
-										"value": "@variables('TableName')",
+										"value": "EMPLOYEE",
 										"type": "Expression"
 									},
 									"SnowSchemaName": {
@@ -2607,7 +2607,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "CUST.csv",
+						"fileName": "EMPLOYEE.csv",
 						"container": "arndatafiles"
 					},
 					"columnDelimiter": ",",
