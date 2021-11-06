@@ -27,9 +27,7 @@
 						"referenceName": "DS_FUSION_BLOB_INPUT_CSV",
 						"type": "DatasetReference"
 					},
-					"fieldList": [
-						"childItems"
-					],
+					"fieldList": [],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
 						"recursive": true,
