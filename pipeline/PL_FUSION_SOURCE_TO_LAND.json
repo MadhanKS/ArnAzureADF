@@ -39,7 +39,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "BlobInputCSV",
+						"referenceName": "DS_FUSION_BLOB_INPUT_CSV",
 						"type": "DatasetReference"
 					}
 				],
