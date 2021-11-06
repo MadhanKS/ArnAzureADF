@@ -471,29 +471,22 @@
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "arndatafiles"
+						"type": "AzureBlobStorageLocation"
 					},
 					"columnDelimiter": ",",
-					"rowDelimiter": "\r\n",
+					"rowDelimiter": "\n",
 					"escapeChar": "\\",
+					"firstRowAsHeader": false,
 					"quoteChar": "\""
 				},
-				"schema": [
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					}
-				]
+				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LS_FUSION_BLOB_INPUT_CSV')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DS_FUSION_PARAMETER_JSON')]",
+			"name": "[concat(parameters('factoryName'), '/DS_FUSION_BLOB_INPUT_CSV_BKP')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -505,88 +498,24 @@
 					"name": "FUSION"
 				},
 				"annotations": [],
-				"type": "Json",
+				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "parameters.json",
-						"container": "config"
-					}
+						"container": "arndatafiles"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
 				},
-				"schema": {
-					"type": "object",
-					"properties": {
-						"CUST": {
-							"type": "array",
-							"items": {
-								"type": "object",
-								"properties": {
-									"tblName": {
-										"type": "string"
-									},
-									"stageName": {
-										"type": "string"
-									},
-									"fileFormat": {
-										"type": "string"
-									},
-									"schema": {
-										"type": "string"
-									},
-									"filename": {
-										"type": "string"
-									}
-								}
-							}
-						},
-						"EMP": {
-							"type": "array",
-							"items": {
-								"type": "object",
-								"properties": {
-									"tblName": {
-										"type": "string"
-									},
-									"stageName": {
-										"type": "string"
-									},
-									"fileFormat": {
-										"type": "string"
-									},
-									"schema": {
-										"type": "string"
-									},
-									"filename": {
-										"type": "string"
-									}
-								}
-							}
-						},
-						"DATE_DIM": {
-							"type": "array",
-							"items": {
-								"type": "object",
-								"properties": {
-									"tblName": {
-										"type": "string"
-									},
-									"stageName": {
-										"type": "string"
-									},
-									"fileFormat": {
-										"type": "string"
-									},
-									"schema": {
-										"type": "string"
-									},
-									"filename": {
-										"type": "string"
-									}
-								}
-							}
-						}
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
 					}
-				}
+				]
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedServices')]"
