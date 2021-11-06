@@ -2,7 +2,7 @@
 	"name": "DS_FUSION_BLOB_INPUT_CSV",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "LS_FUSION_BLOB_INPUT_CSV",
+			"referenceName": "AzureBlobStorageLinkedServices",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
@@ -16,17 +16,11 @@
 				"container": "arndatafiles"
 			},
 			"columnDelimiter": ",",
-			"rowDelimiter": "\r\n",
+			"rowDelimiter": "\n",
 			"escapeChar": "\\",
+			"firstRowAsHeader": false,
 			"quoteChar": "\""
 		},
-		"schema": [
-			{
-				"type": "String"
-			},
-			{
-				"type": "String"
-			}
-		]
+		"schema": []
 	}
 }
