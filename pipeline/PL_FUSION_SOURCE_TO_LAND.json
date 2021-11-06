@@ -205,7 +205,7 @@
 										}
 									},
 									{
-										"name": "Emailnotification",
+										"name": "EMAIL_SUCCESS",
 										"type": "WebActivity",
 										"dependsOn": [
 											{
@@ -233,7 +233,7 @@
 										}
 									},
 									{
-										"name": "Emailnotification_copy1",
+										"name": "EMAIL_FAILURE",
 										"type": "WebActivity",
 										"dependsOn": [
 											{
