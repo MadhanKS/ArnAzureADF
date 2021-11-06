@@ -13,11 +13,10 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "CUST.csv",
 				"container": "arndatafiles"
 			},
 			"columnDelimiter": ",",
-			"rowDelimiter": "\n",
+			"rowDelimiter": "\r\n",
 			"escapeChar": "\\",
 			"quoteChar": "\""
 		},
