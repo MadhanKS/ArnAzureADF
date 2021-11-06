@@ -31,6 +31,10 @@
 			"type": "string",
 			"defaultValue": "https://copytosnowflakeapp.azurewebsites.net/api/Testcopyfunc?code=P1aD6aa1ytl36QN987nWCT2GR1jteRg0vwM0G9/13ecQKG8hkEANLg=="
 		},
+		"LS_FUSION_BLOB_INPUT_CSV_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'LS_FUSION_BLOB_INPUT_CSV'"
+		},
 		"LS_FUSION_SOURCE_SNOWFLAKE_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_SOURCE_SNOWFLAKE'"
@@ -109,6 +113,19 @@
 						"value": "[parameters('LS_AZURE_COPY_FUNC_functionKey')]"
 					},
 					"authentication": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_FUSION_BLOB_INPUT_CSV')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"sasUri": "[parameters('LS_FUSION_BLOB_INPUT_CSV_sasUri')]"
 				}
 			},
 			"dependsOn": []
@@ -444,7 +461,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "AzureBlobStorageLinkedServices",
+					"referenceName": "LS_FUSION_BLOB_INPUT_CSV",
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
@@ -455,9 +472,11 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
+						"fileName": "CUST.csv",
 						"container": "arndatafiles"
 					},
 					"columnDelimiter": ",",
+					"rowDelimiter": "\n",
 					"escapeChar": "\\",
 					"quoteChar": "\""
 				},
@@ -471,7 +490,7 @@
 				]
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedServices')]"
+				"[concat(variables('factoryId'), '/linkedServices/LS_FUSION_BLOB_INPUT_CSV')]"
 			]
 		},
 		{
@@ -572,40 +591,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedServices')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Source_SnowflakeTable')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Source_Snowflake",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SnowflakeTable",
-				"schema": [
-					{
-						"name": "EMP_ID",
-						"type": "NUMBER",
-						"precision": 15,
-						"scale": 0
-					},
-					{
-						"name": "EMP_NAME",
-						"type": "VARCHAR",
-						"precision": 100,
-						"scale": 0
-					}
-				],
-				"typeProperties": {
-					"schema": "ARN_LANDING",
-					"table": "EMPLOYEE"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Source_Snowflake')]"
 			]
 		}
 	]
