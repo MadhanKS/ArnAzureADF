@@ -17,6 +17,7 @@
 				"container": "arndatafiles"
 			},
 			"columnDelimiter": ",",
+			"rowDelimiter": "\n",
 			"escapeChar": "\\",
 			"quoteChar": "\""
 		},
