@@ -31,6 +31,10 @@
 			"type": "string",
 			"defaultValue": "https://copytosnowflakeapp.azurewebsites.net/api/Testcopyfunc?code=P1aD6aa1ytl36QN987nWCT2GR1jteRg0vwM0G9/13ecQKG8hkEANLg=="
 		},
+		"LS_FUSION_SOURCE_SNOWFLAKE_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_SOURCE_SNOWFLAKE'"
+		},
 		"SnowflakeLinkedServices_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'SnowflakeLinkedServices'"
@@ -105,6 +109,19 @@
 						"value": "[parameters('LS_AZURE_COPY_FUNC_functionKey')]"
 					},
 					"authentication": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_FUSION_SOURCE_SNOWFLAKE')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('LS_FUSION_SOURCE_SNOWFLAKE_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -422,120 +439,52 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DS_Source_SnowflakeTable')]",
+			"name": "[concat(parameters('factoryName'), '/DS_FUSION_BLOB_INPUT_CSV')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "Source_Snowflake",
+					"referenceName": "AzureBlobStorageLinkedServices",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "FUSION"
+				},
 				"annotations": [],
-				"type": "SnowflakeTable",
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "arndatafiles"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
 				"schema": [
 					{
-						"name": "EMP_ID",
-						"type": "NUMBER",
-						"precision": 15,
-						"scale": 0
+						"type": "String"
 					},
 					{
-						"name": "EMP_NAME",
-						"type": "VARCHAR",
-						"precision": 100,
-						"scale": 0
+						"type": "String"
 					}
-				],
-				"typeProperties": {
-					"schema": "ARN_LANDING",
-					"table": "EMPLOYEE"
-				}
+				]
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Source_Snowflake')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedServices')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DS_Target_SnowflakeTable')]",
+			"name": "[concat(parameters('factoryName'), '/DS_FUSION_PARAMETER_JSON')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "Target_Snowflake",
+					"referenceName": "AzureBlobStorageLinkedServices",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
-				"type": "SnowflakeTable",
-				"schema": [
-					{
-						"name": "SURRKEY",
-						"type": "NUMBER",
-						"precision": 38,
-						"scale": 0
-					},
-					{
-						"name": "EMP_ID",
-						"type": "NUMBER",
-						"precision": 15,
-						"scale": 0
-					},
-					{
-						"name": "EMP_NAME",
-						"type": "VARCHAR",
-						"precision": 100,
-						"scale": 0
-					},
-					{
-						"name": "IS_ACTIVE",
-						"type": "NUMBER",
-						"precision": 10,
-						"scale": 0
-					},
-					{
-						"name": "LAST_MODIFIED_DATE",
-						"type": "TIMESTAMP_NTZ",
-						"precision": 29,
-						"scale": 9
-					}
-				],
-				"typeProperties": {
-					"schema": "ARN_CURATED",
-					"table": "EMPLOYEE"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Target_Snowflake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/GetSnowSchema')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ADFSnowflake Linkseevice",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SnowflakeTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "PUBLIC",
-					"table": "EMP"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADFSnowflake Linkseevice')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ParameterJson')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ParameterFile",
-					"type": "LinkedServiceReference"
+				"folder": {
+					"name": "FUSION"
 				},
 				"annotations": [],
 				"type": "Json",
@@ -622,7 +571,41 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ParameterFile')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedServices')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Source_SnowflakeTable')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Source_Snowflake",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SnowflakeTable",
+				"schema": [
+					{
+						"name": "EMP_ID",
+						"type": "NUMBER",
+						"precision": 15,
+						"scale": 0
+					},
+					{
+						"name": "EMP_NAME",
+						"type": "VARCHAR",
+						"precision": 100,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "ARN_LANDING",
+					"table": "EMPLOYEE"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Source_Snowflake')]"
 			]
 		}
 	]

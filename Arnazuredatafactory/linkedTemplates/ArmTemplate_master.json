@@ -31,6 +31,10 @@
 			"type": "string",
 			"defaultValue": "https://copytosnowflakeapp.azurewebsites.net/api/Testcopyfunc?code=P1aD6aa1ytl36QN987nWCT2GR1jteRg0vwM0G9/13ecQKG8hkEANLg=="
 		},
+		"LS_FUSION_SOURCE_SNOWFLAKE_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_SOURCE_SNOWFLAKE'"
+		},
 		"SnowflakeLinkedServices_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'SnowflakeLinkedServices'"
@@ -91,6 +95,9 @@
 					},
 					"LS_AZURE_COPY_FUNC_properties_typeProperties_functionAppUrl": {
 						"value": "[parameters('LS_AZURE_COPY_FUNC_properties_typeProperties_functionAppUrl')]"
+					},
+					"LS_FUSION_SOURCE_SNOWFLAKE_connectionString": {
+						"value": "[parameters('LS_FUSION_SOURCE_SNOWFLAKE_connectionString')]"
 					},
 					"SnowflakeLinkedServices_connectionString": {
 						"value": "[parameters('SnowflakeLinkedServices_connectionString')]"
