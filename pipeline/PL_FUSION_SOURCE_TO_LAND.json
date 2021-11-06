@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "CPY_SOURCE_TO_LANDING",
+				"name": "CPY_SOURCE_TO_LANDING_copy1",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -19,6 +19,7 @@
 						"type": "DelimitedTextSource",
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
@@ -48,7 +49,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"SnowFileName": {
-								"value": "CUST",
+								"value": "@variables('TableName')",
 								"type": "Expression"
 							},
 							"SnowSchemaName": {
@@ -60,11 +61,11 @@
 				]
 			},
 			{
-				"name": "EMAIL_SUCCESS",
+				"name": "EMAIL_SUCCESS_copy1",
 				"type": "WebActivity",
 				"dependsOn": [
 					{
-						"activity": "CPY_SOURCE_TO_LANDING",
+						"activity": "CPY_SOURCE_TO_LANDING_copy1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -88,11 +89,11 @@
 				}
 			},
 			{
-				"name": "EMAIL_Failure",
+				"name": "EMAIL_SUCCESS_copy1_copy1",
 				"type": "WebActivity",
 				"dependsOn": [
 					{
-						"activity": "CPY_SOURCE_TO_LANDING",
+						"activity": "CPY_SOURCE_TO_LANDING_copy1",
 						"dependencyConditions": [
 							"Failed"
 						]
