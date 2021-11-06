@@ -352,6 +352,9 @@
 				"type": "Array"
 			}
 		},
+		"folder": {
+			"name": "FUSION"
+		},
 		"annotations": []
 	}
 }
