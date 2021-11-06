@@ -1,5 +1,5 @@
 {
-	"name": "DS_FUSION_BLOB_INPUT_CSV",
+	"name": "DS_FUSION_BLOB_INPUT_CSV_BKP",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureBlobStorageLinkedServices",
@@ -16,11 +16,16 @@
 				"container": "arndatafiles"
 			},
 			"columnDelimiter": ",",
-			"rowDelimiter": "\n",
 			"escapeChar": "\\",
-			"firstRowAsHeader": false,
 			"quoteChar": "\""
 		},
-		"schema": []
+		"schema": [
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			}
+		]
 	}
 }
