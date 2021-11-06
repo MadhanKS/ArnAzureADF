@@ -1,0 +1,301 @@
+{
+	"name": "PL_FUSION_SOURCE_TO_LAND_copy1",
+	"properties": {
+		"activities": [
+			{
+				"name": "GET_MET_CONTAINER_FILE",
+				"description": "",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DS_FUSION_BLOB_INPUT_CSV",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"exists"
+					],
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "FOR_EACH_CONTAINER_FILE",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "GET_MET_CONTAINER_FILE",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GET_MET_CONTAINER_FILE').output.exists",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "LKP_SNOWFLAKE_BLOB_CONTAINER",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SnowflakeSource",
+									"query": {
+										"value": "@concat('select * from information_schema.tables where table_schema = ''', pipeline().parameters.SCHEMA_NAME,''' and table_name =''', toUpper(first(split(item().name,'.'))),'''')",
+										"type": "Expression"
+									},
+									"exportSettings": {
+										"type": "SnowflakeExportCopyCommand"
+									}
+								},
+								"dataset": {
+									"referenceName": "SnowDynamicDataset",
+									"type": "DatasetReference",
+									"parameters": {
+										"SnowFileName": {
+											"value": "@variables('TableName')",
+											"type": "Expression"
+										},
+										"SnowSchemaName": {
+											"value": "@toUpper(first(split(item().name,'.')))",
+											"type": "Expression"
+										}
+									}
+								}
+							}
+						},
+						{
+							"name": "IF_TABLE_EXISTS",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "LKP_SNOWFLAKE_BLOB_CONTAINER",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "VAR_FILETYPE_VARIABLE",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@contains(activity('LKP_SNOWFLAKE_BLOB_CONTAINER').output,'firstRow')",
+									"type": "Expression"
+								},
+								"ifTrueActivities": [
+									{
+										"name": "CPY_SOURCE_TO_LANDING",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "VAR_TABLE_NAME",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"storeSettings": {
+													"type": "AzureBlobStorageReadSettings",
+													"recursive": true,
+													"wildcardFileName": {
+														"value": "@concat(variables('TableName'),'.',variables('FileType'))",
+														"type": "Expression"
+													},
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings"
+												}
+											},
+											"sink": {
+												"type": "SnowflakeSink",
+												"importSettings": {
+													"type": "SnowflakeImportCopyCommand",
+													"additionalCopyOptions": {
+														"ON_ERROR": "ABORT_STATEMENT"
+													}
+												}
+											},
+											"enableStaging": false
+										},
+										"inputs": [
+											{
+												"referenceName": "BlobInputCSV",
+												"type": "DatasetReference"
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "SnowDynamicDataset",
+												"type": "DatasetReference",
+												"parameters": {
+													"SnowFileName": {
+														"value": "@variables('TableName')",
+														"type": "Expression"
+													},
+													"SnowSchemaName": {
+														"value": "@pipeline().parameters.SCHEMA_NAME",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									},
+									{
+										"name": "VAR_TABLE_NAME",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "TableName",
+											"value": {
+												"value": "@activity('LKP_SNOWFLAKE_BLOB_CONTAINER').output.firstRow.TABLE_NAME",
+												"type": "Expression"
+											}
+										}
+									},
+									{
+										"name": "EMAIL_SUCCESS",
+										"type": "WebActivity",
+										"dependsOn": [
+											{
+												"activity": "CPY_SOURCE_TO_LANDING",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"url": "https://prod-23.australiaeast.logic.azure.com:443/workflows/d8931bd55622434780d5c0f6a0e887df/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Fwz947WiGUqHh5dtvm1GSxFM14YUbIhpTYwFUxix65Q",
+											"method": "POST",
+											"body": {
+												"value": "{\n    \"title\": \"PIPELINE SUCCEEDED!\",\n    \"message\": \"Pipeline for @{variables('TableName')} run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
+												"type": "Expression"
+											}
+										}
+									},
+									{
+										"name": "EMAIL_FAILURE",
+										"type": "WebActivity",
+										"dependsOn": [
+											{
+												"activity": "CPY_SOURCE_TO_LANDING",
+												"dependencyConditions": [
+													"Failed"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"url": "https://prod-23.australiaeast.logic.azure.com:443/workflows/d8931bd55622434780d5c0f6a0e887df/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Fwz947WiGUqHh5dtvm1GSxFM14YUbIhpTYwFUxix65Q",
+											"method": "POST",
+											"body": {
+												"value": "{\n    \"title\": \"PIPELINE Failed!\",\n    \"message\": \"Pipeline for @{variables('TableName')} run got aborted!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
+												"type": "Expression"
+											}
+										}
+									}
+								]
+							}
+						},
+						{
+							"name": "VAR_FILETYPE_VARIABLE",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "FileType",
+								"value": {
+									"value": "@split(item().name,'.')[1]",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"SCHEMA_NAME": {
+				"type": "string",
+				"defaultValue": "ARN_LANDING"
+			}
+		},
+		"variables": {
+			"TableName": {
+				"type": "String"
+			},
+			"FileType": {
+				"type": "String"
+			},
+			"SchemaVar": {
+				"type": "String"
+			},
+			"JsonFileName": {
+				"type": "Array"
+			}
+		},
+		"folder": {
+			"name": "FUSION"
+		},
+		"annotations": []
+	}
+}
