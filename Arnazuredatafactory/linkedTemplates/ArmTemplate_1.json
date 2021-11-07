@@ -1484,7 +1484,7 @@
 						]
 					},
 					{
-						"name": "EMAIL_SUCCESS_copy1",
+						"name": "EMAIL_SUCCESS",
 						"type": "WebActivity",
 						"dependsOn": [
 							{
@@ -1513,7 +1513,7 @@
 						}
 					},
 					{
-						"name": "EMAIL_SUCCESS_copy1_copy1",
+						"name": "EMAIL_FAILURE",
 						"type": "WebActivity",
 						"dependsOn": [
 							{
