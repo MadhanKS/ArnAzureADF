@@ -32,7 +32,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "Date_dataflow3",
+								"referenceName": "DF_FUSION_LAND_TO_CURATED",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
