@@ -1,6 +1,9 @@
 {
 	"name": "DF_FUSION_LAND_TO_CURATED",
 	"properties": {
+		"folder": {
+			"name": "FUSION"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
