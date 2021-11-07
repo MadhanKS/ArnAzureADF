@@ -9,14 +9,14 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "DS_Source_SnowflakeTable",
+						"referenceName": "DS_FUSION_SOURCE_SNOWFLAKE",
 						"type": "DatasetReference"
 					},
 					"name": "Upsertlogic"
 				},
 				{
 					"dataset": {
-						"referenceName": "DS_Target_SnowflakeTable",
+						"referenceName": "DS_FUSION_TARGET_SNOWFLAKE",
 						"type": "DatasetReference"
 					},
 					"name": "employeeTable"
@@ -25,14 +25,14 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "DS_Target_SnowflakeTable",
+						"referenceName": "DS_FUSION_TARGET_SNOWFLAKE",
 						"type": "DatasetReference"
 					},
 					"name": "sink2"
 				},
 				{
 					"dataset": {
-						"referenceName": "DS_Target_SnowflakeTable",
+						"referenceName": "DS_FUSION_TARGET_SNOWFLAKE",
 						"type": "DatasetReference"
 					},
 					"name": "sink1"
