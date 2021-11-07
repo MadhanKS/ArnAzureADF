@@ -5,6 +5,9 @@
 			"referenceName": "Target_Snowflake",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "FUSION"
+		},
 		"annotations": [],
 		"type": "SnowflakeTable",
 		"schema": [
