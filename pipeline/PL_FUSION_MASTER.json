@@ -1,0 +1,24 @@
+{
+	"name": "PL_FUSION_MASTER",
+	"properties": {
+		"activities": [
+			{
+				"name": "PL_FUSION_SOURCE_TO_LAND",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_FUSION_SOURCE_TO_LAND",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "FUSION"
+		},
+		"annotations": []
+	}
+}
