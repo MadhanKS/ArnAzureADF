@@ -1,5 +1,5 @@
 {
-	"name": "DS_Source_SnowflakeTable",
+	"name": "DS_FUSION_SOURCE_SNOWFLAKE",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "Source_Snowflake",
