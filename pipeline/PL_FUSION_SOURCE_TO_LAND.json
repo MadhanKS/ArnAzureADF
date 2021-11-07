@@ -83,7 +83,7 @@
 					"url": "https://prod-23.australiaeast.logic.azure.com:443/workflows/d8931bd55622434780d5c0f6a0e887df/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Fwz947WiGUqHh5dtvm1GSxFM14YUbIhpTYwFUxix65Q",
 					"method": "POST",
 					"body": {
-						"value": "{\n    \"title\": \"PIPELINE SUCCEEDED!\",\n    \"message\": \"Pipeline for @{variables('TableName')} run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
+						"value": "{\n    \"title\": \"PIPELINE SUCCEEDED!\",\n    \"message\": \"Pipeline for EMPLOYEE run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
 						"type": "Expression"
 					}
 				}
@@ -111,7 +111,7 @@
 					"url": "https://prod-23.australiaeast.logic.azure.com:443/workflows/d8931bd55622434780d5c0f6a0e887df/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Fwz947WiGUqHh5dtvm1GSxFM14YUbIhpTYwFUxix65Q",
 					"method": "POST",
 					"body": {
-						"value": "{\n    \"title\": \"PIPELINE Failed!\",\n    \"message\": \"Pipeline for @{variables('TableName')} got Failed!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
+						"value": "{\n    \"title\": \"PIPELINE Failed!\",\n    \"message\": \"Pipeline for EMPLOYEE got Failed!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
 						"type": "Expression"
 					}
 				}
