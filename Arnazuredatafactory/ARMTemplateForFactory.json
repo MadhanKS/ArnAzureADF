@@ -1266,7 +1266,7 @@
 						}
 					},
 					{
-						"name": "SOURCE_TO_LAND_EMAIL_SUCCESS",
+						"name": "EMAIL_SUCCESS_SOURCE_TO_LAND",
 						"type": "WebActivity",
 						"dependsOn": [
 							{
@@ -1295,7 +1295,7 @@
 						}
 					},
 					{
-						"name": "SOURCE_TO_LAND_EMAIL_FAILURE",
+						"name": "EMAIL_FAILURE_SOURCE_TO_LAND",
 						"type": "WebActivity",
 						"dependsOn": [
 							{
@@ -1324,7 +1324,7 @@
 						}
 					},
 					{
-						"name": "LAND_TO_CURATED_EMAIL_SUCCESS",
+						"name": "EMAIL_SUCCESS_LAND_TO_CURATED",
 						"type": "WebActivity",
 						"dependsOn": [
 							{
@@ -1353,7 +1353,7 @@
 						}
 					},
 					{
-						"name": "LAND_TO_CURATED_EMAIL_FAILURE",
+						"name": "EMAIL_FAILURE_LAND_TO_CURATED",
 						"type": "WebActivity",
 						"dependsOn": [
 							{
