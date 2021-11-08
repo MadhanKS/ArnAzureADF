@@ -1289,7 +1289,7 @@
 							"method": "POST",
 							"headers": {},
 							"body": {
-								"value": "{\n    \"title\": \"PIPELINE SUCCEEDED!\",\n    \"message\": \"Pipeline for EMPLOYEE run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
+								"value": "{\n    \"title\": \"PIPELINE SUCCEEDED!\",\n    \"message\": \"Pipeline PL_FUSION_SOURCE_TO_LAND for EMPLOYEE run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
 								"type": "Expression"
 							}
 						}
@@ -1318,7 +1318,7 @@
 							"method": "POST",
 							"headers": {},
 							"body": {
-								"value": "{\n    \"title\": \"PIPELINE Failed!\",\n    \"message\": \"Pipeline for EMPLOYEE got Failed!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
+								"value": "{\n    \"title\": \"PIPELINE Failed!\",\n    \"message\": \"Pipeline PL_FUSION_SOURCE_TO_LAND for EMPLOYEE got Failed!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
 								"type": "Expression"
 							}
 						}
@@ -1347,7 +1347,7 @@
 							"method": "POST",
 							"headers": {},
 							"body": {
-								"value": "{\n    \"title\": \"PIPELINE SUCCEEDED!\",\n    \"message\": \"Pipeline for EMPLOYEE run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
+								"value": "{\n    \"title\": \"PIPELINE SUCCEEDED!\",\n    \"message\": \"Pipeline PL_FUSION_LAND_TO_CURATED for EMPLOYEE run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
 								"type": "Expression"
 							}
 						}
@@ -1376,7 +1376,7 @@
 							"method": "POST",
 							"headers": {},
 							"body": {
-								"value": "{\n    \"title\": \"PIPELINE Failed!\",\n    \"message\": \"Pipeline for EMPLOYEE got Failed!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
+								"value": "{\n    \"title\": \"PIPELINE Failed!\",\n    \"message\": \"Pipeline PL_FUSION_LAND_TO_CURATED for EMPLOYEE got Failed!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
 								"type": "Expression"
 							}
 						}
