@@ -17,7 +17,11 @@
 				"typeProperties": {
 					"functionName": "Testcopyfunc",
 					"method": "POST",
-					"body": "{\n\"stg\":\"STG\",\n\"pipelinename\":\"@{pipeline().Pipeline}\",\n\"pipelineid\":\"@{pipeline().RunId}\",\n}"
+					"body": {
+						"stg": "STG",
+						"pipelinename": "@{pipeline().Pipeline}",
+						"pipelineid": "@{pipeline().RunId}"
+					}
 				},
 				"linkedServiceName": {
 					"referenceName": "LS_AZURE_COPY_FUNC",
