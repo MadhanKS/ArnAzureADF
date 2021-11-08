@@ -13,13 +13,16 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/DS_Source_SnowflakeTable')]",
+			"name": "[concat(parameters('factoryName'), '/DS_FUSION_SOURCE_SNOWFLAKE')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
 					"referenceName": "Source_Snowflake",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "FUSION"
 				},
 				"annotations": [],
 				"type": "SnowflakeTable",
@@ -45,13 +48,16 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DS_Target_SnowflakeTable')]",
+			"name": "[concat(parameters('factoryName'), '/DS_FUSION_TARGET_SNOWFLAKE')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
 					"referenceName": "Target_Snowflake",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "FUSION"
 				},
 				"annotations": [],
 				"type": "SnowflakeTable",
@@ -1425,7 +1431,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "CPY_SOURCE_TO_LANDING_copy1",
+						"name": "CPY_SOURCE_TO_LANDING",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -1482,64 +1488,6 @@
 								}
 							}
 						]
-					},
-					{
-						"name": "EMAIL_SUCCESS",
-						"type": "WebActivity",
-						"dependsOn": [
-							{
-								"activity": "CPY_SOURCE_TO_LANDING_copy1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": "https://prod-23.australiaeast.logic.azure.com:443/workflows/d8931bd55622434780d5c0f6a0e887df/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Fwz947WiGUqHh5dtvm1GSxFM14YUbIhpTYwFUxix65Q",
-							"method": "POST",
-							"headers": {},
-							"body": {
-								"value": "{\n    \"title\": \"PIPELINE SUCCEEDED!\",\n    \"message\": \"Pipeline for EMPLOYEE run finished successfully!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
-								"type": "Expression"
-							}
-						}
-					},
-					{
-						"name": "EMAIL_FAILURE",
-						"type": "WebActivity",
-						"dependsOn": [
-							{
-								"activity": "CPY_SOURCE_TO_LANDING_copy1",
-								"dependencyConditions": [
-									"Failed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": "https://prod-23.australiaeast.logic.azure.com:443/workflows/d8931bd55622434780d5c0f6a0e887df/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Fwz947WiGUqHh5dtvm1GSxFM14YUbIhpTYwFUxix65Q",
-							"method": "POST",
-							"headers": {},
-							"body": {
-								"value": "{\n    \"title\": \"PIPELINE Failed!\",\n    \"message\": \"Pipeline for EMPLOYEE got Failed!\",\n    \"color\": \"Green\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"pipelineRunId\": \"@{pipeline().RunId}\",\n    \"time\": \"@{utcnow()}\"\n}",
-								"type": "Expression"
-							}
-						}
 					}
 				],
 				"policy": {
@@ -2639,14 +2587,14 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "DS_Source_SnowflakeTable",
+								"referenceName": "DS_FUSION_SOURCE_SNOWFLAKE",
 								"type": "DatasetReference"
 							},
 							"name": "Upsertlogic"
 						},
 						{
 							"dataset": {
-								"referenceName": "DS_Target_SnowflakeTable",
+								"referenceName": "DS_FUSION_TARGET_SNOWFLAKE",
 								"type": "DatasetReference"
 							},
 							"name": "employeeTable"
@@ -2655,14 +2603,14 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "DS_Target_SnowflakeTable",
+								"referenceName": "DS_FUSION_TARGET_SNOWFLAKE",
 								"type": "DatasetReference"
 							},
 							"name": "sink2"
 						},
 						{
 							"dataset": {
-								"referenceName": "DS_Target_SnowflakeTable",
+								"referenceName": "DS_FUSION_TARGET_SNOWFLAKE",
 								"type": "DatasetReference"
 							},
 							"name": "sink1"
@@ -2695,8 +2643,8 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_Source_SnowflakeTable')]",
-				"[concat(variables('factoryId'), '/datasets/DS_Target_SnowflakeTable')]"
+				"[concat(variables('factoryId'), '/datasets/DS_FUSION_SOURCE_SNOWFLAKE')]",
+				"[concat(variables('factoryId'), '/datasets/DS_FUSION_TARGET_SNOWFLAKE')]"
 			]
 		}
 	]
