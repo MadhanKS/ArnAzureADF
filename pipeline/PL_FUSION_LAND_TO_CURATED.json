@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "DF_FUSION_LAND_TO_CURATED",
+						"referenceName": "DF_FUSION_LAND_TO_CURATED_BKP",
 						"type": "DataFlowReference"
 					},
 					"compute": {
