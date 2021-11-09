@@ -1,0 +1,54 @@
+{
+	"name": "PL_FUSION_EMAIL_TRIGGER",
+	"properties": {
+		"activities": [
+			{
+				"name": "WebHook1",
+				"type": "WebHook",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-23.australiaeast.logic.azure.com:443/workflows/d8931bd55622434780d5c0f6a0e887df/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Fwz947WiGUqHh5dtvm1GSxFM14YUbIhpTYwFUxix65Q",
+					"method": "POST",
+					"headers": {
+						"Content-type": "application/json",
+						"FROM": {
+							"value": "@pipeline().parameters.prm_fromEmail",
+							"type": "Expression"
+						},
+						"TO": {
+							"value": "@pipeline().parameters.prm_emailrecipients",
+							"type": "Expression"
+						},
+						"SUBJECT": {
+							"value": "@pipeline().parameters.prm_stepName",
+							"type": "Expression"
+						}
+					},
+					"body": {
+						"Value": "<p><font face='verdana' color='black' size ='2'>Hi,<BR><BR>The Job Failed at step - @{pipeline().parameters.prm_stepName} Load <BR><BR><BR><BR><BR><BR>Please check Azure Data Factory Monitor for more details.<BR><BR>Thanks & Regards<BR></font><font face='verdana' color='black' size ='2'>@{pipeline().parameters.prm_emailSignature}</font></p>"
+					},
+					"timeout": "00:10:00"
+				}
+			}
+		],
+		"parameters": {
+			"prm_fromEmail": {
+				"type": "string"
+			},
+			"prm_emailrecipients": {
+				"type": "string"
+			},
+			"prm_emailSignature": {
+				"type": "string"
+			},
+			"prm_stepName": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "FUSION"
+		},
+		"annotations": []
+	}
+}
