@@ -54,6 +54,14 @@
 		"Target_Snowflake_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Target_Snowflake'"
+		},
+		"LS_FUSION_TEMP_SNOWFLAKE_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_TEMP_SNOWFLAKE'"
+		},
+		"LS_FUSION_TARGET_SNOWFLAKE_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_TARGET_SNOWFLAKE'"
 		}
 	},
 	"variables": {
@@ -204,6 +212,32 @@
 				"type": "Snowflake",
 				"typeProperties": {
 					"connectionString": "[parameters('Target_Snowflake_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_FUSION_TEMP_SNOWFLAKE')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('LS_FUSION_TEMP_SNOWFLAKE_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_FUSION_TARGET_SNOWFLAKE')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('LS_FUSION_TARGET_SNOWFLAKE_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -452,138 +486,6 @@
 					"quoteChar": "\""
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedServices')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_FUSION_BLOB_INPUT_CSV')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_FUSION_BLOB_INPUT_CSV",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "FUSION"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "EMPLOYEE.csv",
-						"container": "arndatafiles"
-					},
-					"columnDelimiter": ",",
-					"rowDelimiter": "\n",
-					"escapeChar": "\\",
-					"firstRowAsHeader": false,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_FUSION_BLOB_INPUT_CSV')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_FUSION_PARAMETER_JSON')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorageLinkedServices",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "FUSION"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "parameters.json",
-						"container": "config"
-					}
-				},
-				"schema": {
-					"type": "object",
-					"properties": {
-						"CUST": {
-							"type": "array",
-							"items": {
-								"type": "object",
-								"properties": {
-									"tblName": {
-										"type": "string"
-									},
-									"stageName": {
-										"type": "string"
-									},
-									"fileFormat": {
-										"type": "string"
-									},
-									"schema": {
-										"type": "string"
-									},
-									"filename": {
-										"type": "string"
-									}
-								}
-							}
-						},
-						"EMP": {
-							"type": "array",
-							"items": {
-								"type": "object",
-								"properties": {
-									"tblName": {
-										"type": "string"
-									},
-									"stageName": {
-										"type": "string"
-									},
-									"fileFormat": {
-										"type": "string"
-									},
-									"schema": {
-										"type": "string"
-									},
-									"filename": {
-										"type": "string"
-									}
-								}
-							}
-						},
-						"DATE_DIM": {
-							"type": "array",
-							"items": {
-								"type": "object",
-								"properties": {
-									"tblName": {
-										"type": "string"
-									},
-									"stageName": {
-										"type": "string"
-									},
-									"fileFormat": {
-										"type": "string"
-									},
-									"schema": {
-										"type": "string"
-									},
-									"filename": {
-										"type": "string"
-									}
-								}
-							}
-						}
-					}
-				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageLinkedServices')]"

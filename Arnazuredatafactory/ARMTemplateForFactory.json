@@ -54,6 +54,14 @@
 		"Target_Snowflake_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Target_Snowflake'"
+		},
+		"LS_FUSION_TEMP_SNOWFLAKE_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_TEMP_SNOWFLAKE'"
+		},
+		"LS_FUSION_TARGET_SNOWFLAKE_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_TARGET_SNOWFLAKE'"
 		}
 	},
 	"variables": {
@@ -2896,7 +2904,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "Source_Snowflake",
+					"referenceName": "LS_FUSION_SOURCE_SNOWFLAKE",
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
@@ -2924,7 +2932,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Source_Snowflake')]"
+				"[concat(variables('factoryId'), '/linkedServices/LS_FUSION_SOURCE_SNOWFLAKE')]"
 			]
 		},
 		{
@@ -2933,7 +2941,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "Target_Snowflake",
+					"referenceName": "LS_FUSION_TARGET_SNOWFLAKE",
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
@@ -2979,7 +2987,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Target_Snowflake')]"
+				"[concat(variables('factoryId'), '/linkedServices/LS_FUSION_TARGET_SNOWFLAKE')]"
 			]
 		},
 		{
@@ -3545,14 +3553,14 @@
 						},
 						{
 							"dataset": {
-								"referenceName": "DS_FUSION_TARGET_SNOWFLAKE",
+								"referenceName": "DS_FUSION_TEMP_SNOWFLAKE",
 								"type": "DatasetReference"
 							},
 							"name": "employeeTable"
 						},
 						{
 							"dataset": {
-								"referenceName": "DS_FUSION_TARGET_SNOWFLAKE",
+								"referenceName": "DS_FUSION_TEMP_SNOWFLAKE",
 								"type": "DatasetReference"
 							},
 							"name": "EmployeeTableTargetDuplicates"
@@ -3561,24 +3569,24 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "DS_FUSION_TARGET_SNOWFLAKE",
+								"referenceName": "DS_FUSION_TEMP_SNOWFLAKE",
 								"type": "DatasetReference"
 							},
-							"name": "sink2"
+							"name": "UpdateTargetTemp"
+						},
+						{
+							"dataset": {
+								"referenceName": "DS_FUSION_TEMP_SNOWFLAKE",
+								"type": "DatasetReference"
+							},
+							"name": "InsertTargetTemp"
 						},
 						{
 							"dataset": {
 								"referenceName": "DS_FUSION_TARGET_SNOWFLAKE",
 								"type": "DatasetReference"
 							},
-							"name": "sink1"
-						},
-						{
-							"dataset": {
-								"referenceName": "DS_FUSION_TARGET_SNOWFLAKE",
-								"type": "DatasetReference"
-							},
-							"name": "sink3"
+							"name": "DuplicateCheckTarget"
 						}
 					],
 					"transformations": [
@@ -3601,7 +3609,7 @@
 							"name": "renametargetcolumn"
 						},
 						{
-							"name": "Lookup1"
+							"name": "LkpPrimaryKey"
 						},
 						{
 							"name": "RemoveDuplicatetRows"
@@ -3613,12 +3621,94 @@
 							"name": "ReArrangeColumns"
 						}
 					],
-					"script": "source(output(\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: 'select * from ARN_LANDING.EMPLOYEE',\n\tformat: 'query') ~> Upsertlogic\nsource(output(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: 'select * from arn_curated.employee',\n\tformat: 'query') ~> employeeTable\nsource(output(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: 'select * from ARN_CURATED.EMPLOYEE',\n\tformat: 'query') ~> EmployeeTableTargetDuplicates\nUpsertlogic derive(isActive = 1,\n\t\tlastmodifieddate = currentUTC()) ~> addingisActive\nLookup1 filter(!isNull(Curated_EMP_ID)) ~> ExistingRows\nExistingRows select(mapColumn(\n\t\tCurated_SURRKEY,\n\t\tCurated_EMP_ID,\n\t\tCurated_EMP_NAME,\n\t\tCurated_IS_ACTIVE,\n\t\tCurated_LAST_MODIFIED_DATE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect2 derive(Curated_IS_ACTIVE = 0) ~> DerivedColumn1\nDerivedColumn1 alterRow(updateIf(1==1)) ~> AlterRow1\nemployeeTable select(mapColumn(\n\t\tCurated_SURRKEY = SURRKEY,\n\t\tCurated_EMP_ID = EMP_ID,\n\t\tCurated_EMP_NAME = EMP_NAME,\n\t\tCurated_IS_ACTIVE = IS_ACTIVE,\n\t\tCurated_LAST_MODIFIED_DATE = LAST_MODIFIED_DATE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> renametargetcolumn\nUpsertlogic, renametargetcolumn lookup(EMP_ID == Curated_EMP_ID,\n\tmultiple: true,\n\tbroadcast: 'auto')~> Lookup1\nEmployeeTableTargetDuplicates aggregate(groupBy(EMP_ID,\n\t\tEMP_NAME,\n\t\tIS_ACTIVE),\n\teach(match(name!='EMP_ID'&&name!='EMP_NAME'&&name!='IS_ACTIVE'), $$ = first($$))) ~> RemoveDuplicatetRows\nReArrangeColumns sort(asc(EMP_ID, true)) ~> SortRecords\nRemoveDuplicatetRows select(mapColumn(\n\t\tSURRKEY,\n\t\tEMP_ID,\n\t\tEMP_NAME,\n\t\tIS_ACTIVE,\n\t\tLAST_MODIFIED_DATE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> ReArrangeColumns\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['SURRKEY'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\tstageInsert: true,\n\tmapColumn(\n\t\tSURRKEY = Curated_SURRKEY,\n\t\tEMP_ID = Curated_EMP_ID,\n\t\tEMP_NAME = Curated_EMP_NAME,\n\t\tIS_ACTIVE = Curated_IS_ACTIVE,\n\t\tLAST_MODIFIED_DATE = Curated_LAST_MODIFIED_DATE\n\t)) ~> sink2\naddingisActive sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\tstageInsert: true,\n\tmapColumn(\n\t\tEMP_ID,\n\t\tEMP_NAME,\n\t\tIS_ACTIVE = isActive,\n\t\tLAST_MODIFIED_DATE = lastmodifieddate\n\t)) ~> sink1\nSortRecords sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 3,\n\tstageInsert: true,\n\tmapColumn(\n\t\tSURRKEY,\n\t\tEMP_ID,\n\t\tEMP_NAME,\n\t\tIS_ACTIVE,\n\t\tLAST_MODIFIED_DATE\n\t)) ~> sink3"
+					"script": "source(output(\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: 'select * from ARN_LANDING.EMPLOYEE',\n\tformat: 'query') ~> Upsertlogic\nsource(output(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: 'select * from arn_curated.employee_temp',\n\tformat: 'query') ~> employeeTable\nsource(output(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: 'select * from ARN_CURATED.EMPLOYEE_TEMP',\n\tformat: 'query') ~> EmployeeTableTargetDuplicates\nUpsertlogic derive(isActive = 1,\n\t\tlastmodifieddate = currentUTC()) ~> addingisActive\nLkpPrimaryKey filter(!isNull(Curated_EMP_ID)) ~> ExistingRows\nExistingRows select(mapColumn(\n\t\tCurated_SURRKEY,\n\t\tCurated_EMP_ID,\n\t\tCurated_EMP_NAME,\n\t\tCurated_IS_ACTIVE,\n\t\tCurated_LAST_MODIFIED_DATE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect2 derive(Curated_IS_ACTIVE = 0) ~> DerivedColumn1\nDerivedColumn1 alterRow(updateIf(1==1)) ~> AlterRow1\nemployeeTable select(mapColumn(\n\t\tCurated_SURRKEY = SURRKEY,\n\t\tCurated_EMP_ID = EMP_ID,\n\t\tCurated_EMP_NAME = EMP_NAME,\n\t\tCurated_IS_ACTIVE = IS_ACTIVE,\n\t\tCurated_LAST_MODIFIED_DATE = LAST_MODIFIED_DATE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> renametargetcolumn\nUpsertlogic, renametargetcolumn lookup(EMP_ID == Curated_EMP_ID,\n\tmultiple: true,\n\tbroadcast: 'auto')~> LkpPrimaryKey\nEmployeeTableTargetDuplicates aggregate(groupBy(EMP_ID,\n\t\tEMP_NAME,\n\t\tIS_ACTIVE),\n\teach(match(name!='EMP_ID'&&name!='EMP_NAME'&&name!='IS_ACTIVE'), $$ = first($$))) ~> RemoveDuplicatetRows\nReArrangeColumns sort(asc(EMP_ID, true)) ~> SortRecords\nRemoveDuplicatetRows select(mapColumn(\n\t\tSURRKEY,\n\t\tEMP_ID,\n\t\tEMP_NAME,\n\t\tIS_ACTIVE,\n\t\tLAST_MODIFIED_DATE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> ReArrangeColumns\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['SURRKEY'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\tstageInsert: true,\n\tmapColumn(\n\t\tSURRKEY = Curated_SURRKEY,\n\t\tEMP_ID = Curated_EMP_ID,\n\t\tEMP_NAME = Curated_EMP_NAME,\n\t\tIS_ACTIVE = Curated_IS_ACTIVE,\n\t\tLAST_MODIFIED_DATE = Curated_LAST_MODIFIED_DATE\n\t)) ~> UpdateTargetTemp\naddingisActive sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\tstageInsert: true,\n\tmapColumn(\n\t\tEMP_ID,\n\t\tEMP_NAME,\n\t\tIS_ACTIVE = isActive,\n\t\tLAST_MODIFIED_DATE = lastmodifieddate\n\t)) ~> InsertTargetTemp\nSortRecords sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 3,\n\tstageInsert: true,\n\tmapColumn(\n\t\tSURRKEY,\n\t\tEMP_ID,\n\t\tEMP_NAME,\n\t\tIS_ACTIVE,\n\t\tLAST_MODIFIED_DATE\n\t)) ~> DuplicateCheckTarget"
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_FUSION_SOURCE_SNOWFLAKE')]",
+				"[concat(variables('factoryId'), '/datasets/DS_FUSION_TEMP_SNOWFLAKE')]",
 				"[concat(variables('factoryId'), '/datasets/DS_FUSION_TARGET_SNOWFLAKE')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_FUSION_TEMP_SNOWFLAKE')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('LS_FUSION_TEMP_SNOWFLAKE_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_FUSION_TARGET_SNOWFLAKE')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('LS_FUSION_TARGET_SNOWFLAKE_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_FUSION_TEMP_SNOWFLAKE')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_FUSION_TEMP_SNOWFLAKE",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "FUSION"
+				},
+				"annotations": [],
+				"type": "SnowflakeTable",
+				"schema": [
+					{
+						"name": "SURRKEY",
+						"type": "NUMBER",
+						"precision": 38,
+						"scale": 0
+					},
+					{
+						"name": "EMP_ID",
+						"type": "NUMBER",
+						"precision": 15,
+						"scale": 0
+					},
+					{
+						"name": "EMP_NAME",
+						"type": "VARCHAR",
+						"precision": 100,
+						"scale": 0
+					},
+					{
+						"name": "IS_ACTIVE",
+						"type": "NUMBER",
+						"precision": 10,
+						"scale": 0
+					},
+					{
+						"name": "LAST_MODIFIED_DATE",
+						"type": "TIMESTAMP_NTZ",
+						"precision": 29,
+						"scale": 9
+					}
+				],
+				"typeProperties": {
+					"schema": "ARN_CURATED",
+					"table": "EMPLOYEE_TEMP"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_FUSION_TEMP_SNOWFLAKE')]"
 			]
 		}
 	]

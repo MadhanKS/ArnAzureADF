@@ -55,6 +55,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Target_Snowflake'"
 		},
+		"LS_FUSION_TEMP_SNOWFLAKE_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_TEMP_SNOWFLAKE'"
+		},
+		"LS_FUSION_TARGET_SNOWFLAKE_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_TARGET_SNOWFLAKE'"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -117,6 +125,12 @@
 					},
 					"Target_Snowflake_connectionString": {
 						"value": "[parameters('Target_Snowflake_connectionString')]"
+					},
+					"LS_FUSION_TEMP_SNOWFLAKE_connectionString": {
+						"value": "[parameters('LS_FUSION_TEMP_SNOWFLAKE_connectionString')]"
+					},
+					"LS_FUSION_TARGET_SNOWFLAKE_connectionString": {
+						"value": "[parameters('LS_FUSION_TARGET_SNOWFLAKE_connectionString')]"
 					}
 				}
 			},

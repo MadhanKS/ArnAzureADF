@@ -40,6 +40,12 @@
 		},
 		"Target_Snowflake_connectionString": {
 			"value": ""
+		},
+		"LS_FUSION_TEMP_SNOWFLAKE_connectionString": {
+			"value": ""
+		},
+		"LS_FUSION_TARGET_SNOWFLAKE_connectionString": {
+			"value": ""
 		}
 	}
 }
