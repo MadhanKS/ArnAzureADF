@@ -2,7 +2,7 @@
 	"name": "DS_FUSION_TARGET_SNOWFLAKE",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "Target_Snowflake",
+			"referenceName": "LS_FUSION_TARGET_SNOWFLAKE",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
