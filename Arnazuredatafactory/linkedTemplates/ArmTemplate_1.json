@@ -1637,6 +1637,10 @@
 							},
 							"sink": {
 								"type": "SnowflakeSink",
+								"preCopyScript": {
+									"value": "TRUNCATE table ARN_LANDING.EMPLOYEE",
+									"type": "Expression"
+								},
 								"importSettings": {
 									"type": "SnowflakeImportCopyCommand",
 									"additionalCopyOptions": {
