@@ -716,14 +716,14 @@
 								"referenceName": "DS_FUSION_TARGET_SNOWFLAKE",
 								"type": "DatasetReference"
 							},
-							"name": "sink2"
+							"name": "UpdateTarget"
 						},
 						{
 							"dataset": {
 								"referenceName": "DS_FUSION_TARGET_SNOWFLAKE",
 								"type": "DatasetReference"
 							},
-							"name": "sink1"
+							"name": "InsertTarget"
 						}
 					],
 					"transformations": [
@@ -734,22 +734,22 @@
 							"name": "ExistingRows"
 						},
 						{
-							"name": "Select2"
+							"name": "SelectColumnsProjection"
 						},
 						{
-							"name": "DerivedColumn1"
+							"name": "DerivedColumnForInActive"
 						},
 						{
-							"name": "AlterRow1"
+							"name": "AlterRowForSource"
 						},
 						{
 							"name": "renametargetcolumn"
 						},
 						{
-							"name": "Lookup1"
+							"name": "LkpPrimaryKey"
 						}
 					],
-					"script": "source(output(\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: 'select * from ARN_LANDING.EMPLOYEE',\n\tformat: 'query') ~> Upsertlogic\nsource(output(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: 'select * from arn_curated.employee',\n\tformat: 'query') ~> employeeTable\nUpsertlogic derive(isActive = 1,\n\t\tlastmodifieddate = currentUTC()) ~> addingisActive\nLookup1 filter(!isNull(Curated_EMP_ID)) ~> ExistingRows\nExistingRows select(mapColumn(\n\t\tCurated_SURRKEY,\n\t\tCurated_EMP_ID,\n\t\tCurated_EMP_NAME,\n\t\tCurated_IS_ACTIVE,\n\t\tCurated_LAST_MODIFIED_DATE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect2 derive(Curated_IS_ACTIVE = 0) ~> DerivedColumn1\nDerivedColumn1 alterRow(updateIf(1==1)) ~> AlterRow1\nemployeeTable select(mapColumn(\n\t\tCurated_SURRKEY = SURRKEY,\n\t\tCurated_EMP_ID = EMP_ID,\n\t\tCurated_EMP_NAME = EMP_NAME,\n\t\tCurated_IS_ACTIVE = IS_ACTIVE,\n\t\tCurated_LAST_MODIFIED_DATE = LAST_MODIFIED_DATE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> renametargetcolumn\nUpsertlogic, renametargetcolumn lookup(EMP_ID == Curated_EMP_ID,\n\tmultiple: true,\n\tbroadcast: 'auto')~> Lookup1\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['SURRKEY'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\tstageInsert: true,\n\tmapColumn(\n\t\tSURRKEY = Curated_SURRKEY,\n\t\tEMP_ID = Curated_EMP_ID,\n\t\tEMP_NAME = Curated_EMP_NAME,\n\t\tIS_ACTIVE = Curated_IS_ACTIVE,\n\t\tLAST_MODIFIED_DATE = Curated_LAST_MODIFIED_DATE\n\t)) ~> sink2\naddingisActive sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\tstageInsert: true,\n\tmapColumn(\n\t\tEMP_ID,\n\t\tEMP_NAME,\n\t\tIS_ACTIVE = isActive,\n\t\tLAST_MODIFIED_DATE = lastmodifieddate\n\t)) ~> sink1"
+					"script": "source(output(\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: 'select * from ARN_LANDING.EMPLOYEE',\n\tformat: 'query') ~> Upsertlogic\nsource(output(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: 'select * from arn_curated.employee',\n\tformat: 'query') ~> employeeTable\nUpsertlogic derive(isActive = 1,\n\t\tlastmodifieddate = currentUTC()) ~> addingisActive\nLkpPrimaryKey filter(!isNull(Curated_EMP_ID)) ~> ExistingRows\nExistingRows select(mapColumn(\n\t\tCurated_SURRKEY,\n\t\tCurated_EMP_ID,\n\t\tCurated_EMP_NAME,\n\t\tCurated_IS_ACTIVE,\n\t\tCurated_LAST_MODIFIED_DATE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectColumnsProjection\nSelectColumnsProjection derive(Curated_IS_ACTIVE = 0) ~> DerivedColumnForInActive\nDerivedColumnForInActive alterRow(updateIf(1==1)) ~> AlterRowForSource\nemployeeTable select(mapColumn(\n\t\tCurated_SURRKEY = SURRKEY,\n\t\tCurated_EMP_ID = EMP_ID,\n\t\tCurated_EMP_NAME = EMP_NAME,\n\t\tCurated_IS_ACTIVE = IS_ACTIVE,\n\t\tCurated_LAST_MODIFIED_DATE = LAST_MODIFIED_DATE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> renametargetcolumn\nUpsertlogic, renametargetcolumn lookup(EMP_ID == Curated_EMP_ID,\n\tmultiple: true,\n\tbroadcast: 'auto')~> LkpPrimaryKey\nAlterRowForSource sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['SURRKEY'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\tstageInsert: true,\n\tmapColumn(\n\t\tSURRKEY = Curated_SURRKEY,\n\t\tEMP_ID = Curated_EMP_ID,\n\t\tEMP_NAME = Curated_EMP_NAME,\n\t\tIS_ACTIVE = Curated_IS_ACTIVE,\n\t\tLAST_MODIFIED_DATE = Curated_LAST_MODIFIED_DATE\n\t)) ~> UpdateTarget\naddingisActive sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\tstageInsert: true,\n\tmapColumn(\n\t\tEMP_ID,\n\t\tEMP_NAME,\n\t\tIS_ACTIVE = isActive,\n\t\tLAST_MODIFIED_DATE = lastmodifieddate\n\t)) ~> InsertTarget"
 				}
 			},
 			"dependsOn": []
@@ -873,8 +873,8 @@
 								"datasetParameters": {
 									"Upsertlogic": {},
 									"employeeTable": {},
-									"sink2": {},
-									"sink1": {}
+									"UpdateTarget": {},
+									"InsertTarget": {}
 								}
 							},
 							"staging": {},
@@ -922,8 +922,8 @@
 								"datasetParameters": {
 									"Upsertlogic": {},
 									"employeeTable": {},
-									"sink2": {},
-									"sink1": {}
+									"UpdateTarget": {},
+									"InsertTarget": {}
 								}
 							},
 							"staging": {},
