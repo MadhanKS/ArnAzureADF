@@ -16,18 +16,14 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "DelimitedTextSource",
-						"storeSettings": {
-							"type": "AzureBlobStorageReadSettings",
-							"recursive": true,
-							"enablePartitionDiscovery": false
-						},
-						"formatSettings": {
-							"type": "DelimitedTextReadSettings"
+						"type": "SnowflakeSource",
+						"query": "call arn_landing.get_record_count();",
+						"exportSettings": {
+							"type": "SnowflakeExportCopyCommand"
 						}
 					},
 					"dataset": {
-						"referenceName": "DS_FUSION_BLOB_INPUT_CSV",
+						"referenceName": "DS_FUSION_TEMP_SNOWFLAKE",
 						"type": "DatasetReference"
 					}
 				}
@@ -47,7 +43,7 @@
 				"typeProperties": {
 					"variableName": "VAR_OP",
 					"value": {
-						"value": "@activity('Lookup1').output.value",
+						"value": "@{activity('Lookup1').output.firstRow}",
 						"type": "Expression"
 					}
 				}
