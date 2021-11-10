@@ -8,7 +8,10 @@
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://prod-23.australiaeast.logic.azure.com:443/workflows/d8931bd55622434780d5c0f6a0e887df/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Fwz947WiGUqHh5dtvm1GSxFM14YUbIhpTYwFUxix65Q",
+					"url": {
+						"value": "https://b5cddf55-fedc-4415-956c-660af4b86b87.webhook.eus.azure-automation.net/webhooks?token=MO%2b8Ahu8zB%2fMGPZQx8xRBXOhoffJREtF02Qw4WWwwso%3d",
+						"type": "Expression"
+					},
 					"method": "POST",
 					"headers": {
 						"Content-type": "application/json",
@@ -44,6 +47,12 @@
 			},
 			"prm_stepName": {
 				"type": "string"
+			}
+		},
+		"variables": {
+			"Name": {
+				"type": "String",
+				"defaultValue": "Avi"
 			}
 		},
 		"folder": {
