@@ -8,19 +8,13 @@
 		"parameters": {
 			"SnowFileName": {
 				"type": "string"
-			},
-			"SnowSchemaName": {
-				"type": "string"
 			}
 		},
 		"annotations": [],
 		"type": "SnowflakeTable",
 		"schema": [],
 		"typeProperties": {
-			"schema": {
-				"value": "@dataset().SnowSchemaName",
-				"type": "Expression"
-			},
+			"schema": "ARN_LANDING",
 			"table": {
 				"value": "@dataset().SnowFileName",
 				"type": "Expression"
