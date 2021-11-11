@@ -47,6 +47,12 @@
 		"LS_FUSION_TARGET_SNOWFLAKE_connectionString": {
 			"value": ""
 		},
+		"LS_SOURCE_SCD_TYPE_1_connectionString": {
+			"value": ""
+		},
+		"LS_TARGET_SCD_TYPE_1_connectionString": {
+			"value": ""
+		},
 		"containerUri": {
 			"value": ""
 		},

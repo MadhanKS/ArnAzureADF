@@ -62,6 +62,14 @@
 		"LS_FUSION_TARGET_SNOWFLAKE_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_TARGET_SNOWFLAKE'"
+		},
+		"LS_SOURCE_SCD_TYPE_1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_SOURCE_SCD_TYPE_1'"
+		},
+		"LS_TARGET_SCD_TYPE_1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_TARGET_SCD_TYPE_1'"
 		}
 	},
 	"variables": {
@@ -3733,18 +3741,14 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
+								"type": "SnowflakeSource",
+								"query": "call arn_landing.get_record_count();",
+								"exportSettings": {
+									"type": "SnowflakeExportCopyCommand"
 								}
 							},
 							"dataset": {
-								"referenceName": "DS_FUSION_BLOB_INPUT_CSV",
+								"referenceName": "DS_FUSION_TEMP_SNOWFLAKE",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -3765,7 +3769,7 @@
 						"typeProperties": {
 							"variableName": "VAR_OP",
 							"value": {
-								"value": "@activity('Lookup1').output.value",
+								"value": "@{activity('Lookup1').output.firstRow}",
 								"type": "Expression"
 							}
 						}
@@ -3786,7 +3790,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_FUSION_BLOB_INPUT_CSV')]"
+				"[concat(variables('factoryId'), '/datasets/DS_FUSION_TEMP_SNOWFLAKE')]"
 			]
 		},
 		{
@@ -3856,6 +3860,81 @@
 					"name": "FUSION"
 				},
 				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_SOURCE_SCD_TYPE_1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('LS_SOURCE_SCD_TYPE_1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_SOURCE_SCD_TYPE_1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_SOURCE_SCD_TYPE_1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "FUSION"
+				},
+				"annotations": [],
+				"type": "SnowflakeTable",
+				"schema": [
+					{
+						"name": "EMP_ID",
+						"type": "NUMBER",
+						"precision": 15,
+						"scale": 0
+					},
+					{
+						"name": "NAME",
+						"type": "VARCHAR",
+						"precision": 100,
+						"scale": 0
+					},
+					{
+						"name": "COUNTRY",
+						"type": "VARCHAR",
+						"precision": 100,
+						"scale": 0
+					},
+					{
+						"name": "DEPARTMENT",
+						"type": "NUMBER",
+						"precision": 15,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "ARN_LANDING",
+					"table": "SCD_EMPLOYEE_SOURCE"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_SOURCE_SCD_TYPE_1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_TARGET_SCD_TYPE_1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('LS_TARGET_SCD_TYPE_1_connectionString')]"
+				}
 			},
 			"dependsOn": []
 		}
