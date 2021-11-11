@@ -1,0 +1,32 @@
+{
+	"name": "DF_SCD_TYPE_1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_SOURCE_SCD_TYPE_1",
+						"type": "DatasetReference"
+					},
+					"name": "empSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_TARGET_SCD_TYPE_1",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "AlterRow1"
+				}
+			],
+			"script": "source(output(\n\t\tEMP_ID as decimal(15,0),\n\t\tNAME as string,\n\t\tCOUNTRY as string,\n\t\tDEPARTMENT as decimal(15,0)\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table') ~> empSource\nempSource alterRow(upsertIf(1==1)) ~> AlterRow1\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tEMP_ID as decimal(15,0),\n\t\tNAME as string,\n\t\tCOUNTRY as string,\n\t\tDEPARTMENT as decimal(15,0)\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['EMP_ID'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tstageInsert: true,\n\tmapColumn(\n\t\tEMP_ID,\n\t\tNAME,\n\t\tCOUNTRY,\n\t\tDEPARTMENT\n\t)) ~> sink1"
+		}
+	}
+}
