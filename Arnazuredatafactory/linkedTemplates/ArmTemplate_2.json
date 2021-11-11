@@ -1650,6 +1650,76 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SnowflakeSource",
+								"query": "call arn_landing.get_record_count();",
+								"exportSettings": {
+									"type": "SnowflakeExportCopyCommand"
+								}
+							},
+							"dataset": {
+								"referenceName": "DS_FUSION_TEMP_SNOWFLAKE",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "VAR_OP",
+							"value": {
+								"value": "@{activity('Lookup1').output.firstRow}",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"VAR_OP": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "FUSION"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DF_FUSION_LAND_TO_CURATED')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -1809,76 +1879,6 @@
 					],
 					"script": "source(output(\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: 'select * from ARN_LANDING.EMPLOYEE',\n\tformat: 'query') ~> Upsertlogic\nsource(output(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: 'select * from arn_curated.employee_temp',\n\tformat: 'query') ~> employeeTable\nsource(output(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tquery: 'select * from ARN_CURATED.EMPLOYEE_TEMP',\n\tformat: 'query') ~> EmployeeTableTargetDuplicates\nUpsertlogic derive(isActive = 1,\n\t\tlastmodifieddate = currentUTC()) ~> addingisActive\nLkpPrimaryKey filter(!isNull(Curated_EMP_ID)) ~> ExistingRows\nExistingRows select(mapColumn(\n\t\tCurated_SURRKEY,\n\t\tCurated_EMP_ID,\n\t\tCurated_EMP_NAME,\n\t\tCurated_IS_ACTIVE,\n\t\tCurated_LAST_MODIFIED_DATE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect2 derive(Curated_IS_ACTIVE = 0) ~> DerivedColumn1\nDerivedColumn1 alterRow(updateIf(1==1)) ~> AlterRow1\nemployeeTable select(mapColumn(\n\t\tCurated_SURRKEY = SURRKEY,\n\t\tCurated_EMP_ID = EMP_ID,\n\t\tCurated_EMP_NAME = EMP_NAME,\n\t\tCurated_IS_ACTIVE = IS_ACTIVE,\n\t\tCurated_LAST_MODIFIED_DATE = LAST_MODIFIED_DATE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> renametargetcolumn\nUpsertlogic, renametargetcolumn lookup(EMP_ID == Curated_EMP_ID,\n\tmultiple: true,\n\tbroadcast: 'auto')~> LkpPrimaryKey\nEmployeeTableTargetDuplicates aggregate(groupBy(EMP_ID,\n\t\tEMP_NAME,\n\t\tIS_ACTIVE),\n\teach(match(name!='EMP_ID'&&name!='EMP_NAME'&&name!='IS_ACTIVE'), $$ = first($$))) ~> RemoveDuplicatetRows\nReArrangeColumns sort(asc(EMP_ID, true)) ~> SortRecords\nRemoveDuplicatetRows select(mapColumn(\n\t\tSURRKEY,\n\t\tEMP_ID,\n\t\tEMP_NAME,\n\t\tIS_ACTIVE,\n\t\tLAST_MODIFIED_DATE\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> ReArrangeColumns\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['SURRKEY'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\tstageInsert: true,\n\tmapColumn(\n\t\tSURRKEY = Curated_SURRKEY,\n\t\tEMP_ID = Curated_EMP_ID,\n\t\tEMP_NAME = Curated_EMP_NAME,\n\t\tIS_ACTIVE = Curated_IS_ACTIVE,\n\t\tLAST_MODIFIED_DATE = Curated_LAST_MODIFIED_DATE\n\t)) ~> UpdateTargetTemp\naddingisActive sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\tstageInsert: true,\n\tmapColumn(\n\t\tEMP_ID,\n\t\tEMP_NAME,\n\t\tIS_ACTIVE = isActive,\n\t\tLAST_MODIFIED_DATE = lastmodifieddate\n\t)) ~> InsertTargetTemp\nSortRecords sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tSURRKEY as decimal(38,0),\n\t\tEMP_ID as decimal(15,0),\n\t\tEMP_NAME as string,\n\t\tIS_ACTIVE as decimal(10,0),\n\t\tLAST_MODIFIED_DATE as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 3,\n\tstageInsert: true,\n\tmapColumn(\n\t\tSURRKEY,\n\t\tEMP_ID,\n\t\tEMP_NAME,\n\t\tIS_ACTIVE,\n\t\tLAST_MODIFIED_DATE\n\t)) ~> DuplicateCheckTarget"
 				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Lookup1",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SnowflakeSource",
-								"query": "call arn_landing.get_record_count();",
-								"exportSettings": {
-									"type": "SnowflakeExportCopyCommand"
-								}
-							},
-							"dataset": {
-								"referenceName": "DS_FUSION_TEMP_SNOWFLAKE",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						}
-					},
-					{
-						"name": "Set variable1",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "Lookup1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "VAR_OP",
-							"value": {
-								"value": "@{activity('Lookup1').output.firstRow}",
-								"type": "Expression"
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"variables": {
-					"VAR_OP": {
-						"type": "String"
-					}
-				},
-				"folder": {
-					"name": "FUSION"
-				},
-				"annotations": []
 			},
 			"dependsOn": []
 		},

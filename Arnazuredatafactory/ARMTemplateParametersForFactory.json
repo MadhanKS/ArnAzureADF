@@ -29,6 +29,18 @@
 		"LS_FUSION_SOURCE_SNOWFLAKE_connectionString": {
 			"value": ""
 		},
+		"LS_FUSION_TARGET_SNOWFLAKE_connectionString": {
+			"value": ""
+		},
+		"LS_FUSION_TEMP_SNOWFLAKE_connectionString": {
+			"value": ""
+		},
+		"LS_SOURCE_SCD_TYPE_1_connectionString": {
+			"value": ""
+		},
+		"LS_TARGET_SCD_TYPE_1_connectionString": {
+			"value": ""
+		},
 		"SnowflakeLinkedServices_connectionString": {
 			"value": ""
 		},
@@ -39,18 +51,6 @@
 			"value": ""
 		},
 		"Target_Snowflake_connectionString": {
-			"value": ""
-		},
-		"LS_FUSION_TEMP_SNOWFLAKE_connectionString": {
-			"value": ""
-		},
-		"LS_FUSION_TARGET_SNOWFLAKE_connectionString": {
-			"value": ""
-		},
-		"LS_SOURCE_SCD_TYPE_1_connectionString": {
-			"value": ""
-		},
-		"LS_TARGET_SCD_TYPE_1_connectionString": {
 			"value": ""
 		}
 	}

@@ -39,6 +39,22 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_SOURCE_SNOWFLAKE'"
 		},
+		"LS_FUSION_TARGET_SNOWFLAKE_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_TARGET_SNOWFLAKE'"
+		},
+		"LS_FUSION_TEMP_SNOWFLAKE_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_TEMP_SNOWFLAKE'"
+		},
+		"LS_SOURCE_SCD_TYPE_1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_SOURCE_SCD_TYPE_1'"
+		},
+		"LS_TARGET_SCD_TYPE_1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_TARGET_SCD_TYPE_1'"
+		},
 		"SnowflakeLinkedServices_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'SnowflakeLinkedServices'"
@@ -54,22 +70,6 @@
 		"Target_Snowflake_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Target_Snowflake'"
-		},
-		"LS_FUSION_TEMP_SNOWFLAKE_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_TEMP_SNOWFLAKE'"
-		},
-		"LS_FUSION_TARGET_SNOWFLAKE_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_TARGET_SNOWFLAKE'"
-		},
-		"LS_SOURCE_SCD_TYPE_1_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'LS_SOURCE_SCD_TYPE_1'"
-		},
-		"LS_TARGET_SCD_TYPE_1_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'LS_TARGET_SCD_TYPE_1'"
 		},
 		"containerUri": {
 			"type": "string",
@@ -122,6 +122,18 @@
 					"LS_FUSION_SOURCE_SNOWFLAKE_connectionString": {
 						"value": "[parameters('LS_FUSION_SOURCE_SNOWFLAKE_connectionString')]"
 					},
+					"LS_FUSION_TARGET_SNOWFLAKE_connectionString": {
+						"value": "[parameters('LS_FUSION_TARGET_SNOWFLAKE_connectionString')]"
+					},
+					"LS_FUSION_TEMP_SNOWFLAKE_connectionString": {
+						"value": "[parameters('LS_FUSION_TEMP_SNOWFLAKE_connectionString')]"
+					},
+					"LS_SOURCE_SCD_TYPE_1_connectionString": {
+						"value": "[parameters('LS_SOURCE_SCD_TYPE_1_connectionString')]"
+					},
+					"LS_TARGET_SCD_TYPE_1_connectionString": {
+						"value": "[parameters('LS_TARGET_SCD_TYPE_1_connectionString')]"
+					},
 					"SnowflakeLinkedServices_connectionString": {
 						"value": "[parameters('SnowflakeLinkedServices_connectionString')]"
 					},
@@ -133,18 +145,6 @@
 					},
 					"Target_Snowflake_connectionString": {
 						"value": "[parameters('Target_Snowflake_connectionString')]"
-					},
-					"LS_FUSION_TEMP_SNOWFLAKE_connectionString": {
-						"value": "[parameters('LS_FUSION_TEMP_SNOWFLAKE_connectionString')]"
-					},
-					"LS_FUSION_TARGET_SNOWFLAKE_connectionString": {
-						"value": "[parameters('LS_FUSION_TARGET_SNOWFLAKE_connectionString')]"
-					},
-					"LS_SOURCE_SCD_TYPE_1_connectionString": {
-						"value": "[parameters('LS_SOURCE_SCD_TYPE_1_connectionString')]"
-					},
-					"LS_TARGET_SCD_TYPE_1_connectionString": {
-						"value": "[parameters('LS_TARGET_SCD_TYPE_1_connectionString')]"
 					}
 				}
 			},

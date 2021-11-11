@@ -39,6 +39,22 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_SOURCE_SNOWFLAKE'"
 		},
+		"LS_FUSION_TARGET_SNOWFLAKE_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_TARGET_SNOWFLAKE'"
+		},
+		"LS_FUSION_TEMP_SNOWFLAKE_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_TEMP_SNOWFLAKE'"
+		},
+		"LS_SOURCE_SCD_TYPE_1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_SOURCE_SCD_TYPE_1'"
+		},
+		"LS_TARGET_SCD_TYPE_1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_TARGET_SCD_TYPE_1'"
+		},
 		"SnowflakeLinkedServices_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'SnowflakeLinkedServices'"
@@ -54,28 +70,82 @@
 		"Target_Snowflake_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'Target_Snowflake'"
-		},
-		"LS_FUSION_TEMP_SNOWFLAKE_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_TEMP_SNOWFLAKE'"
-		},
-		"LS_FUSION_TARGET_SNOWFLAKE_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'LS_FUSION_TARGET_SNOWFLAKE'"
-		},
-		"LS_SOURCE_SCD_TYPE_1_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'LS_SOURCE_SCD_TYPE_1'"
-		},
-		"LS_TARGET_SCD_TYPE_1_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'LS_TARGET_SCD_TYPE_1'"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_FUSION_EMAIL_TRIGGER')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "WebHook1",
+						"type": "WebHook",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"url": {
+								"value": "https://b5cddf55-fedc-4415-956c-660af4b86b87.webhook.eus.azure-automation.net/webhooks?token=MO%2b8Ahu8zB%2fMGPZQx8xRBXOhoffJREtF02Qw4WWwwso%3d",
+								"type": "Expression"
+							},
+							"method": "POST",
+							"headers": {
+								"Content-type": "application/json",
+								"FROM": {
+									"value": "@pipeline().parameters.prm_fromEmail",
+									"type": "Expression"
+								},
+								"TO": {
+									"value": "@pipeline().parameters.prm_emailrecipients",
+									"type": "Expression"
+								},
+								"SUBJECT": {
+									"value": "@pipeline().parameters.prm_stepName",
+									"type": "Expression"
+								}
+							},
+							"body": {
+								"Value": "<p><font face='verdana' color='black' size ='2'>Hi,<BR><BR>The Job Failed at step - @{pipeline().parameters.prm_stepName} Load <BR><BR><BR><BR><BR><BR>Please check Azure Data Factory Monitor for more details.<BR><BR>Thanks & Regards<BR></font><font face='verdana' color='black' size ='2'>@{pipeline().parameters.prm_emailSignature}</font></p>"
+							},
+							"timeout": "00:10:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"prm_fromEmail": {
+						"type": "string"
+					},
+					"prm_emailrecipients": {
+						"type": "string"
+					},
+					"prm_emailSignature": {
+						"type": "string"
+					},
+					"prm_stepName": {
+						"type": "string"
+					}
+				},
+				"variables": {
+					"Name": {
+						"type": "String",
+						"defaultValue": "Avi"
+					}
+				},
+				"folder": {
+					"name": "FUSION"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ADFSnowflake Linkseevice')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
@@ -160,6 +230,58 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LS_FUSION_TARGET_SNOWFLAKE')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('LS_FUSION_TARGET_SNOWFLAKE_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_FUSION_TEMP_SNOWFLAKE')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('LS_FUSION_TEMP_SNOWFLAKE_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_SOURCE_SCD_TYPE_1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('LS_SOURCE_SCD_TYPE_1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_TARGET_SCD_TYPE_1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Snowflake",
+				"typeProperties": {
+					"connectionString": "[parameters('LS_TARGET_SCD_TYPE_1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ParameterFile')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -220,128 +342,6 @@
 				"type": "Snowflake",
 				"typeProperties": {
 					"connectionString": "[parameters('Target_Snowflake_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LS_FUSION_TEMP_SNOWFLAKE')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "Snowflake",
-				"typeProperties": {
-					"connectionString": "[parameters('LS_FUSION_TEMP_SNOWFLAKE_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LS_FUSION_TARGET_SNOWFLAKE')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "Snowflake",
-				"typeProperties": {
-					"connectionString": "[parameters('LS_FUSION_TARGET_SNOWFLAKE_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/PL_FUSION_EMAIL_TRIGGER')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "WebHook1",
-						"type": "WebHook",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"url": {
-								"value": "https://b5cddf55-fedc-4415-956c-660af4b86b87.webhook.eus.azure-automation.net/webhooks?token=MO%2b8Ahu8zB%2fMGPZQx8xRBXOhoffJREtF02Qw4WWwwso%3d",
-								"type": "Expression"
-							},
-							"method": "POST",
-							"headers": {
-								"Content-type": "application/json",
-								"FROM": {
-									"value": "@pipeline().parameters.prm_fromEmail",
-									"type": "Expression"
-								},
-								"TO": {
-									"value": "@pipeline().parameters.prm_emailrecipients",
-									"type": "Expression"
-								},
-								"SUBJECT": {
-									"value": "@pipeline().parameters.prm_stepName",
-									"type": "Expression"
-								}
-							},
-							"body": {
-								"Value": "<p><font face='verdana' color='black' size ='2'>Hi,<BR><BR>The Job Failed at step - @{pipeline().parameters.prm_stepName} Load <BR><BR><BR><BR><BR><BR>Please check Azure Data Factory Monitor for more details.<BR><BR>Thanks & Regards<BR></font><font face='verdana' color='black' size ='2'>@{pipeline().parameters.prm_emailSignature}</font></p>"
-							},
-							"timeout": "00:10:00"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"parameters": {
-					"prm_fromEmail": {
-						"type": "string"
-					},
-					"prm_emailrecipients": {
-						"type": "string"
-					},
-					"prm_emailSignature": {
-						"type": "string"
-					},
-					"prm_stepName": {
-						"type": "string"
-					}
-				},
-				"variables": {
-					"Name": {
-						"type": "String",
-						"defaultValue": "Avi"
-					}
-				},
-				"folder": {
-					"name": "FUSION"
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LS_SOURCE_SCD_TYPE_1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "Snowflake",
-				"typeProperties": {
-					"connectionString": "[parameters('LS_SOURCE_SCD_TYPE_1_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LS_TARGET_SCD_TYPE_1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "Snowflake",
-				"typeProperties": {
-					"connectionString": "[parameters('LS_TARGET_SCD_TYPE_1_connectionString')]"
 				}
 			},
 			"dependsOn": []

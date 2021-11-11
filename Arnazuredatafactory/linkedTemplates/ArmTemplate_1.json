@@ -317,6 +317,153 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DS_FUSION_TEMP_SNOWFLAKE')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_FUSION_TEMP_SNOWFLAKE",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "FUSION"
+				},
+				"annotations": [],
+				"type": "SnowflakeTable",
+				"schema": [
+					{
+						"name": "SURRKEY",
+						"type": "NUMBER",
+						"precision": 38,
+						"scale": 0
+					},
+					{
+						"name": "EMP_ID",
+						"type": "NUMBER",
+						"precision": 15,
+						"scale": 0
+					},
+					{
+						"name": "EMP_NAME",
+						"type": "VARCHAR",
+						"precision": 100,
+						"scale": 0
+					},
+					{
+						"name": "IS_ACTIVE",
+						"type": "NUMBER",
+						"precision": 10,
+						"scale": 0
+					},
+					{
+						"name": "LAST_MODIFIED_DATE",
+						"type": "TIMESTAMP_NTZ",
+						"precision": 29,
+						"scale": 9
+					}
+				],
+				"typeProperties": {
+					"schema": "ARN_CURATED",
+					"table": "EMPLOYEE_TEMP"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_SOURCE_SCD_TYPE_1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_SOURCE_SCD_TYPE_1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "FUSION"
+				},
+				"annotations": [],
+				"type": "SnowflakeTable",
+				"schema": [
+					{
+						"name": "EMP_ID",
+						"type": "NUMBER",
+						"precision": 15,
+						"scale": 0
+					},
+					{
+						"name": "NAME",
+						"type": "VARCHAR",
+						"precision": 100,
+						"scale": 0
+					},
+					{
+						"name": "COUNTRY",
+						"type": "VARCHAR",
+						"precision": 100,
+						"scale": 0
+					},
+					{
+						"name": "DEPARTMENT",
+						"type": "NUMBER",
+						"precision": 15,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "ARN_LANDING",
+					"table": "SCD_EMPLOYEE_SOURCE"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_TARGET_SCD_TYPE_1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_TARGET_SCD_TYPE_1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "FUSION"
+				},
+				"annotations": [],
+				"type": "SnowflakeTable",
+				"schema": [
+					{
+						"name": "EMP_ID",
+						"type": "NUMBER",
+						"precision": 15,
+						"scale": 0
+					},
+					{
+						"name": "NAME",
+						"type": "VARCHAR",
+						"precision": 100,
+						"scale": 0
+					},
+					{
+						"name": "COUNTRY",
+						"type": "VARCHAR",
+						"precision": 100,
+						"scale": 0
+					},
+					{
+						"name": "DEPARTMENT",
+						"type": "NUMBER",
+						"precision": 15,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "ARN_CURATED",
+					"table": "SCD_EMPLOYEE_TARGET"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/GetSnowSchema')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -621,154 +768,7 @@
 				],
 				"typeProperties": {
 					"schema": "PUBLIC",
-					"table": "CUST"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_FUSION_TEMP_SNOWFLAKE')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_FUSION_TEMP_SNOWFLAKE",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "FUSION"
-				},
-				"annotations": [],
-				"type": "SnowflakeTable",
-				"schema": [
-					{
-						"name": "SURRKEY",
-						"type": "NUMBER",
-						"precision": 38,
-						"scale": 0
-					},
-					{
-						"name": "EMP_ID",
-						"type": "NUMBER",
-						"precision": 15,
-						"scale": 0
-					},
-					{
-						"name": "EMP_NAME",
-						"type": "VARCHAR",
-						"precision": 100,
-						"scale": 0
-					},
-					{
-						"name": "IS_ACTIVE",
-						"type": "NUMBER",
-						"precision": 10,
-						"scale": 0
-					},
-					{
-						"name": "LAST_MODIFIED_DATE",
-						"type": "TIMESTAMP_NTZ",
-						"precision": 29,
-						"scale": 9
-					}
-				],
-				"typeProperties": {
-					"schema": "ARN_CURATED",
-					"table": "EMPLOYEE_TEMP"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_SOURCE_SCD_TYPE_1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_SOURCE_SCD_TYPE_1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "FUSION"
-				},
-				"annotations": [],
-				"type": "SnowflakeTable",
-				"schema": [
-					{
-						"name": "EMP_ID",
-						"type": "NUMBER",
-						"precision": 15,
-						"scale": 0
-					},
-					{
-						"name": "NAME",
-						"type": "VARCHAR",
-						"precision": 100,
-						"scale": 0
-					},
-					{
-						"name": "COUNTRY",
-						"type": "VARCHAR",
-						"precision": 100,
-						"scale": 0
-					},
-					{
-						"name": "DEPARTMENT",
-						"type": "NUMBER",
-						"precision": 15,
-						"scale": 0
-					}
-				],
-				"typeProperties": {
-					"schema": "ARN_LANDING",
-					"table": "SCD_EMPLOYEE_SOURCE"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_TARGET_SCD_TYPE_1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_TARGET_SCD_TYPE_1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "FUSION"
-				},
-				"annotations": [],
-				"type": "SnowflakeTable",
-				"schema": [
-					{
-						"name": "EMP_ID",
-						"type": "NUMBER",
-						"precision": 15,
-						"scale": 0
-					},
-					{
-						"name": "NAME",
-						"type": "VARCHAR",
-						"precision": 100,
-						"scale": 0
-					},
-					{
-						"name": "COUNTRY",
-						"type": "VARCHAR",
-						"precision": 100,
-						"scale": 0
-					},
-					{
-						"name": "DEPARTMENT",
-						"type": "NUMBER",
-						"precision": 15,
-						"scale": 0
-					}
-				],
-				"typeProperties": {
-					"schema": "ARN_CURATED",
-					"table": "SCD_EMPLOYEE_TARGET"
+					"table": "cust"
 				}
 			},
 			"dependsOn": []
@@ -923,7 +923,9 @@
 							{
 								"referenceName": "BlobCSV",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"FileName": "EMP.csv"
+								}
 							}
 						],
 						"outputs": [
