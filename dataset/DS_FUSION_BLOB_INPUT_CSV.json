@@ -5,6 +5,11 @@
 			"referenceName": "LS_FUSION_BLOB_INPUT_CSV",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"FileName": {
+				"type": "string"
+			}
+		},
 		"folder": {
 			"name": "FUSION"
 		},
@@ -13,7 +18,10 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "EMPLOYEE.csv",
+				"fileName": {
+					"value": "@dataset().FileName",
+					"type": "Expression"
+				},
 				"container": "arndatafiles"
 			},
 			"columnDelimiter": ",",
