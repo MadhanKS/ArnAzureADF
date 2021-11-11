@@ -13,6 +13,244 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/BlobToSnowflakeParameterized')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetFiles",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "BlobInputCSV",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobStorageReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "ForEachFileItems",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetFiles",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetFiles').output.childItems",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "LookupSnowFlakeTables",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SnowflakeSource",
+											"query": {
+												"value": "@concat('select * from information_schema.tables where table_schema = ''', pipeline().parameters.SCHEMA_NAME,''' and table_name =''', toUpper(first(split(item().name,'.'))),'''')",
+												"type": "Expression"
+											},
+											"exportSettings": {
+												"type": "SnowflakeExportCopyCommand"
+											}
+										},
+										"dataset": {
+											"referenceName": "GetSnowSchema",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									}
+								},
+								{
+									"name": "If Table Exists",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "LookupSnowFlakeTables",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										},
+										{
+											"activity": "Set FileType Variable",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@contains(activity('LookupSnowFlakeTables').output,'firstRow')",
+											"type": "Expression"
+										},
+										"ifTrueActivities": [
+											{
+												"name": "Copy data from Blob to Snowflake",
+												"type": "Copy",
+												"dependsOn": [
+													{
+														"activity": "Set TableName Variable",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "DelimitedTextSource",
+														"storeSettings": {
+															"type": "AzureBlobStorageReadSettings",
+															"recursive": true,
+															"wildcardFileName": {
+																"value": "@concat(variables('TableName'),'.',variables('FileType'))",
+																"type": "Expression"
+															},
+															"enablePartitionDiscovery": false
+														},
+														"formatSettings": {
+															"type": "DelimitedTextReadSettings"
+														}
+													},
+													"sink": {
+														"type": "SnowflakeSink",
+														"importSettings": {
+															"type": "SnowflakeImportCopyCommand",
+															"additionalCopyOptions": {
+																"ON_ERROR": "SKIP_FILE"
+															}
+														}
+													},
+													"enableStaging": false
+												},
+												"inputs": [
+													{
+														"referenceName": "BlobInputCSV",
+														"type": "DatasetReference",
+														"parameters": {}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "SnowDynamicDataset",
+														"type": "DatasetReference",
+														"parameters": {
+															"SnowFileName": {
+																"value": "@variables('TableName')",
+																"type": "Expression"
+															},
+															"SnowSchemaName": {
+																"value": "@pipeline().parameters.SCHEMA_NAME",
+																"type": "Expression"
+															}
+														}
+													}
+												]
+											},
+											{
+												"name": "Set TableName Variable",
+												"type": "SetVariable",
+												"dependsOn": [],
+												"userProperties": [],
+												"typeProperties": {
+													"variableName": "TableName",
+													"value": {
+														"value": "@activity('LookupSnowFlakeTables').output.firstRow.TABLE_NAME",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									}
+								},
+								{
+									"name": "Set FileType Variable",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "FileType",
+										"value": {
+											"value": "@split(item().name,'.')[1]",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"SCHEMA_NAME": {
+						"type": "string",
+						"defaultValue": "ARN_LANDING"
+					}
+				},
+				"variables": {
+					"TableName": {
+						"type": "String"
+					},
+					"FileType": {
+						"type": "String"
+					},
+					"SchemaVar": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Inputfilecheck')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1641,6 +1879,41 @@
 					"name": "FUSION"
 				},
 				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DF_SCD_TYPE_1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "DS_SOURCE_SCD_TYPE_1",
+								"type": "DatasetReference"
+							},
+							"name": "empSource"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DS_TARGET_SCD_TYPE_1",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "AlterRow1"
+						}
+					],
+					"script": "source(output(\n\t\tEMP_ID as decimal(15,0),\n\t\tNAME as string,\n\t\tCOUNTRY as string,\n\t\tDEPARTMENT as decimal(15,0)\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table') ~> empSource\nempSource alterRow(upsertIf(1==1)) ~> AlterRow1\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tEMP_ID as decimal(15,0),\n\t\tNAME as string,\n\t\tCOUNTRY as string,\n\t\tDEPARTMENT as decimal(15,0)\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['EMP_ID'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tstageInsert: true,\n\tmapColumn(\n\t\tEMP_ID,\n\t\tNAME,\n\t\tCOUNTRY,\n\t\tDEPARTMENT\n\t)) ~> sink1"
+				}
 			},
 			"dependsOn": []
 		},
