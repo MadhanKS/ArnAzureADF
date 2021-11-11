@@ -1,0 +1,44 @@
+{
+	"name": "DS_SOURCE_SCD_TYPE_1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SOURCE_SCD_TYPE_1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "FUSION"
+		},
+		"annotations": [],
+		"type": "SnowflakeTable",
+		"schema": [
+			{
+				"name": "EMP_ID",
+				"type": "NUMBER",
+				"precision": 15,
+				"scale": 0
+			},
+			{
+				"name": "NAME",
+				"type": "VARCHAR",
+				"precision": 100,
+				"scale": 0
+			},
+			{
+				"name": "COUNTRY",
+				"type": "VARCHAR",
+				"precision": 100,
+				"scale": 0
+			},
+			{
+				"name": "DEPARTMENT",
+				"type": "NUMBER",
+				"precision": 15,
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "ARN_LANDING",
+			"table": "SCD_EMPLOYEE_SOURCE"
+		}
+	}
+}
